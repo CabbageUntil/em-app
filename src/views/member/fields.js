@@ -34,12 +34,12 @@ export const memberListTableFields = [
   {
     name: 'birthday',
     title: () => i18n.t(prefix + '.memberList.birthday'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: 'idCardExp',
     title: () => i18n.t(prefix + '.memberList.idCardExp'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: 'nativePlace',
@@ -66,12 +66,12 @@ export const memberListTableFields = [
   {
     name: 'entryDate',
     title: () => i18n.t(prefix + '.memberList.entryDate'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: 'leaveDate',
     title: () => i18n.t(prefix + '.memberList.leaveDate'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: 'memberStatus',

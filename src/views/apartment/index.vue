@@ -13,7 +13,11 @@
             <el-radio :label="0">{{ $t('table.buttonHint.apartment.radio.note2') }}</el-radio>
             <el-radio :label="3">{{ $t('table.buttonHint.apartment.radio.note3') }}</el-radio>
           </el-radio-group>
-           <el-button type="primary" style="margin-left:15px;"  @click="dialogFormVisible = true"  plain>新建部门</el-button>
+           <el-button
+             type="primary"
+             style="margin-left:15px;"
+             @click="dialogFormVisible = true"
+             plain>新建部门</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -47,12 +51,20 @@
             <el-input
               placeholder="请输入部门名称"
               v-model="form.deptName"
+              :is-required="true"
               clearable>
             </el-input>
           </el-form-item>
 
-          <el-form-item label="上级部门" :label-width="formLabelWidth" clearable>
-            <el-select  filterable  clearable v-model="form.parentId" placeholder="请选择上级部门">
+          <el-form-item
+            label="上级部门"
+            :label-width="formLabelWidth"
+            clearable>
+            <el-select
+              filterable
+              clearable
+              v-model="form.parentId"
+              placeholder="请选择上级部门">
               <el-option
                 v-for="item in options"
                 :key="item.deptId"
@@ -90,6 +102,7 @@ export default {
       formLabelWidth: '120px'
     }
   },
+
   components: {
     MyVuetable
   },
@@ -155,12 +168,11 @@ export default {
     }
   },
   mounted: function () {
-    var _this = this   //很重要！！
+    var _this = this
     selectdeptList().then(function (res) {
-            _this.options = res.data.data
-        })
-        .catch(function (error) {
-            console.log(error);
+      _this.options = res.data.data
+    }).catch(function (error) {
+      console.log(error);
     });
   }
 }

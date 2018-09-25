@@ -18,7 +18,7 @@ export default {
       })
     } else {
       console.log('无token')
-     window.location.href = 'https://passport.dianchat.net/pass/service_login?callback=' + process.env.BASE_API + '/login'
+      window.location.href = 'https://passport.dianchat.net/pass/service_login?callback=' + process.env.BASE_API + '/login'
     }
   }
 }

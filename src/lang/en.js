@@ -360,6 +360,18 @@ export default {
           label: 'nativePlace',
           hint: 'please input your native place'
         },
+        idCard: {
+          label: 'IDCard',
+          hint: 'please input your idCard'
+        },
+        blankCard: {
+          label: 'blankCard',
+          hint: 'please input your blankCard'
+        },
+        blankName: {
+          label: 'blankName',
+          hint: 'please input your blankName'
+        },
         symbolicAnimal: {
           label: 'symbolicAnimal',
           hint: 'symbolic animal',

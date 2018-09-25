@@ -34,10 +34,12 @@
         prop="memberName"
         :label="$t('form.personalInfo.field.name.label')"
       >
-        <el-input
-          v-model="form.memberName"
-          :placeholder="$t('form.personalInfo.field.name.hint')"
-        />
+        <el-col :span="12">
+          <el-input
+            v-model="form.memberName"
+            :placeholder="$t('form.personalInfo.field.name.hint')"
+          />
+        </el-col>
       </el-form-item>
       <!-- 学历 -->
       <el-form-item
@@ -130,6 +132,39 @@
           :placeholder="$t('form.personalInfo.field.IDCardExp.hint')"
           v-model="form.idCardExp"
         />
+      </el-form-item>
+      <!-- 身份证号码 -->
+      <el-form-item
+        :label="$t('form.personalInfo.field.idCard.label')"
+      >
+        <el-col :span="12">
+          <el-input
+            v-model="form.IdCard"
+            :placeholder="$t('form.personalInfo.field.idCard.hint')"
+          />
+        </el-col>
+      </el-form-item>
+      <!-- 银行卡号 -->
+      <el-form-item
+        :label="$t('form.personalInfo.field.blankCard.label')"
+      >
+        <el-col :span="12">
+          <el-input
+            v-model="form.IdCard"
+            :placeholder="$t('form.personalInfo.field.blankCard.hint')"
+          />
+        </el-col>
+      </el-form-item>
+      <!-- 开户行 -->
+      <el-form-item
+        :label="$t('form.personalInfo.field.blankName.label')"
+      >
+        <el-col :span="12">
+          <el-input
+            v-model="form.IdCard"
+            :placeholder="$t('form.personalInfo.field.blankName.hint')"
+          />
+        </el-col>
       </el-form-item>
       <!-- 紧急联系人 -->
       <el-form-item
@@ -230,7 +265,7 @@
 import LabelValueList from '@/components/LabelValueList'
 import SymbolicAnimal from './components/SymbolicAnimal'
 
-import { fetchMember, fetchArchiveGeneral, fetchSpecArchive, saveMember } from '@/api/member'
+import { fetchMember, fetchArchiveGeneral,findMemberById, fetchSpecArchive, saveMember } from '@/api/member'
 import { joinCom } from '@/api/company'
 
 export default {
@@ -329,6 +364,7 @@ export default {
         orgId: '',
         birthday: null,
         idCardExp: null,
+        IdCard: '',
         emergencyUser: '',
         emergencyMobile: '',
         sybolicAnimal: null,
@@ -387,9 +423,6 @@ export default {
         this.fillData(response.data)
       })
     },
-    filterArchive () {
-    },
-
     getRules () {
       let validateMsg = this.$t('form.personalInfo.validate.notEmpty')
       return {
@@ -439,7 +472,7 @@ export default {
       // 构建空的表单
       this.buildEmptyForm()
     } else if (path.indexOf('/member/edit') >= 0) {
-      fetchMember(id).then(response => {
+      findMemberById(id).then(response => {
         this.mode = 'edit'
         this.fillData(response.data)
       })

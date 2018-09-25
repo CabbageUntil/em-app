@@ -31,7 +31,7 @@ export const existScheduleTableFields = [
   {
     name: 'arrange_date',
     title: () => i18n.t(prefix + '.scheduleList.createDatetime'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: '__slot:actions',

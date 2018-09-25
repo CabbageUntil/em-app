@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-joinCom-container">
     <el-row>
-      <el-col :lg="16">
+      <el-col :lg="24">
         <el-tag type="warning">时间段</el-tag>
         <el-date-picker
           v-model="start_time"
@@ -54,19 +54,20 @@
           <el-form-item
             :label="$t('table.fields.scheduleList.deptName')"
             :label-width="formLabelWidth">
-              <el-select
-                filterable
-                clearable
-                @change="selectList()"
-                v-model="form.deptId"
-                placeholder="请选择查询部门">
-                <el-option
-                  v-for="item in add_options"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId">
-                </el-option>
-              </el-select>
+            <el-select
+              filterable
+              clearable
+              :is-required="true"
+              @change="selectList()"
+              v-model="form.deptId"
+              placeholder="请选择查询部门">
+              <el-option
+                v-for="item in add_options"
+                :key="item.deptId"
+                :label="item.deptName"
+                :value="item.deptId">
+              </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item
@@ -75,6 +76,7 @@
             <el-select
               filterable
               clearable
+              :is-required="true"
               v-model="form.memberId"
               placeholder="请选择员工信息">
               <el-option
@@ -92,6 +94,7 @@
             <el-date-picker
               v-model="form.createDatetime"
               type="datetime"
+              :is-required="true"
               placeholder="选择日期时间"/>
           </el-form-item>
 
@@ -241,24 +244,24 @@ import MyVuetable from '@/components/Table/MyVuetable'
 import { existScheduleTableFields } from './fields.js'
 import { selectdeptList } from '@/api/apartment'
 import { memSelectList } from '@/api/member'
-import { removeSchedule, addSchedule, editSchedule , removeSchedules} from '@/api/schedule'
+import { removeSchedule, addSchedule,scheduleList, removeSchedules } from '@/api/schedule'
 export default {
   data () {
     return {
       multipleSelection: [],
-      header_deptId:'',
-      add_option:[],
-      options:[],
-      member_option:[],
-      start_time:'',
-      end_time:'',
+      header_deptId: '',
+      add_option: [],
+      options: [],
+      member_option: [],
+      start_time: '',
+      end_time: '',
       form: {
         note1: '',
         note2: '',
         note3: '',
         deptId: '',
-        memberId:'',
-        createDatetime: '',
+        memberId: '',
+        createDatetime: ''
       },
       editform: {
         agendaName: '',
@@ -289,43 +292,40 @@ export default {
     },
     apiUrl () {
       var _this = this
-      return '/org/scheduleList?date1=' +
-        _this.start_time +
-        '&date2=' + _this.end_time+
-        '&deptId=' + _this.header_deptId
+      return '/org/scheduleList?date1='+ _this.start_time +'&date2='+_this.end_time+'&deptId='+_this.header_deptId
     }
   },
   methods: {
-    selectRows(){
+    selectRows () {
       let tableObj = this.$refs.apartmentListTable.$refs.vuetable
       let selectIds = this.$refs.apartmentListTable.$refs.vuetable.selectedTo
       console.log(selectIds)
-      if(selectIds.length>0){
-         removeSchedules(selectIds).then(response => {
-           const data = response.code
-           if (data === 0) {
-             this.$message({
-               message: this.$t('table.buttonAction.removeSchedule.success'),
-               type: 'success'
-             })
-             tableObj.reload()
-           } else {
-             this.$message.error(this.$t('table.buttonAction.removeSchedule.fail'))
-           }
-         }).catch(error => {
-           this.$message.error(this.$t('table.buttonAction.removeSchedule.fail') + ': ' + error)
-         })
-      }else{
-          this.$message.error(this.$t('请选择删除日程！！'))
+      if (selectIds.length > 0) {
+        removeSchedules(selectIds).then(response => {
+          const data = response.code
+          if (data === 0) {
+            this.$message({
+              message: this.$t('table.buttonAction.removeSchedule.success'),
+              type: 'success'
+            })
+            tableObj.reload()
+          } else {
+            this.$message.error(this.$t('table.buttonAction.removeSchedule.fail'))
+          }
+        }).catch(error => {
+          this.$message.error(this.$t('table.buttonAction.removeSchedule.fail') + ': ' + error)
+        })
+      } else {
+        this.$message.error(this.$t('请选择删除日程！！'))
       }
     },
-    selectList(){
+    selectList () {
       var _this = this
       var id = _this.form.deptId
       memSelectList(id).then(function (res) {
-              _this.member_option = res.data.data
-          }).catch(function (error) {
-              console.log(error)
+        _this.member_option = res.data.data
+      }).catch(function (error) {
+        console.log(error)
       })
     },
     handleEdit (row) {
@@ -341,7 +341,7 @@ export default {
           note2: _this.form.note2,
           note3: _this.form.note3,
           memberId: _this.form.memberId,
-          deptId:_this.form.deptId,
+          deptId: _this.form.deptId,
           createDatetime: (_this.form.createDatetime).getTime()
         }
         addSchedule(param).then(response => {
@@ -362,7 +362,7 @@ export default {
           this.$message.error(this.$t('table.buttonAction.addSchedule.fail') + ': ' + error)
         })
         this.dialogFormVisible = false
-      }else if (action === 'remove') {
+      } else if (action === 'remove') {
         this.$confirm(this.$t('table.buttonAction.removeSchedule.message.content').replace('%{name}', rowData.agendaId),
           this.$t('table.buttonAction.removeSchedule.message.title'),
           {
@@ -394,11 +394,10 @@ export default {
   mounted: function () {
     var _this = this
     selectdeptList().then(function (res) {
-            _this.options = res.data.data
-            _this.add_options = res.data.data
-        })
-        .catch(function (error) {
-            console.log(error)
+      _this.options = res.data.data
+      _this.add_options = res.data.data
+    }).catch(function (error) {
+      console.log(error)
     })
   }
 

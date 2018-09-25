@@ -1,7 +1,6 @@
 import i18n from '@/lang'
 
 export function formatEducation (val) {
-  console.log('学历' + val)
   let prefix = 'form.personalInfo.field.education.option.'
   switch (val) {
     case 1:

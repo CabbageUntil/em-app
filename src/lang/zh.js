@@ -368,6 +368,18 @@ export default {
           label: '籍贯',
           hint: '请输入籍贯'
         },
+        idCard: {
+          label: '身份证号',
+          hint: '请输入身份证号'
+        },
+        blankCard: {
+          label: '银行卡号',
+          hint: '请输入银行卡号'
+        },
+        blankName: {
+          label: '开户行',
+          hint: '请输入开户行'
+        },
         symbolicAnimal: {
           label: '生肖',
           hint: '生肖',

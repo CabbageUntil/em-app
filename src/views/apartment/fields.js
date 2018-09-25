@@ -18,12 +18,12 @@ export const existApartmentTableFields = [
   {
     name: 'deptCreateDatetime',
     title: () => i18n.t(prefix + '.apartmentList.deptCreateDatetime'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: 'deptRemoveDatetime',
     title: () => i18n.t(prefix + '.apartmentList.deptRemoveDatetime'),
-    callback:'formatDate'
+    callback: 'formatDate'
   },
   {
     name: '__slot:actions',
