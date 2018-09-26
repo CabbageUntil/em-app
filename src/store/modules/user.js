@@ -89,6 +89,7 @@ const user = {
             reject(new Error())
           } else {
             const data = response.data
+            console.log(" 登录信息 ---》》%o", data)
             // 若已登录公司，则使用公司身份，否则使用游客身份
             // 分配登录公司信息
             if (data.role !== 'visitor') {

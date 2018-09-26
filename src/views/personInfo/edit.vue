@@ -135,33 +135,36 @@
       </el-form-item>
       <!-- 身份证号码 -->
       <el-form-item
+        prop="idCard"
         :label="$t('form.personalInfo.field.idCard.label')"
       >
         <el-col :span="12">
           <el-input
-            v-model="form.IdCard"
+            v-model="form.idCard"
             :placeholder="$t('form.personalInfo.field.idCard.hint')"
           />
         </el-col>
       </el-form-item>
       <!-- 银行卡号 -->
       <el-form-item
+        prop="blankId"
         :label="$t('form.personalInfo.field.blankCard.label')"
       >
         <el-col :span="12">
           <el-input
-            v-model="form.IdCard"
+            v-model="form.blankId"
             :placeholder="$t('form.personalInfo.field.blankCard.hint')"
           />
         </el-col>
       </el-form-item>
       <!-- 开户行 -->
       <el-form-item
+        prop="blankName"
         :label="$t('form.personalInfo.field.blankName.label')"
       >
         <el-col :span="12">
           <el-input
-            v-model="form.IdCard"
+            v-model="form.blankName"
             :placeholder="$t('form.personalInfo.field.blankName.hint')"
           />
         </el-col>
@@ -364,7 +367,9 @@ export default {
         orgId: '',
         birthday: null,
         idCardExp: null,
-        IdCard: '',
+        idCard: '',
+        blankId: '',
+        blankName: '',
         emergencyUser: '',
         emergencyMobile: '',
         sybolicAnimal: null,
@@ -410,12 +415,39 @@ export default {
         idCardExp: new Date(data.idCardExp),
         emergencyUser: data.emergencyUser,
         emergencyMobile: data.emergencyMobile,
+        idCard: data.idCard,
+        blankName: data.blankName,
+        blankId: data.blankId,
         sybolicAnimal: data.animal,
         nativePlace: data.nativePlace,
-        telList: data.tel,
-        emailList: data.email,
-        addressList: data.address,
-        otherList: data.other
+        telList: data.tel === null ? [
+          {
+            id: 0,
+            label: '',
+            content: ''
+          }
+        ] : data.tel,
+        emailList: data.email.length === 0 ? [
+          {
+            id: 0,
+            label: '',
+            content: ''
+          }
+        ] : data.email,
+        addressList: data.address.length === 0 ? [
+          {
+            id: 0,
+            label: '',
+            content: ''
+          }
+        ] : data.address,
+        otherList:data.other.length === 0 ? [
+          {
+            id: 0,
+            label: '',
+            content: ''
+          }
+        ] : data.other
       }
     },
     handleArchiveChange (orgId) {
@@ -442,6 +474,15 @@ export default {
           { type: 'date', required: true, message: validateMsg, trigger: 'blur' }
         ],
         sex: [
+          { required: true, message: validateMsg, trigger: 'blur' }
+        ],
+        idCard: [
+          { required: true, message: validateMsg, trigger: 'blur' }
+        ],
+        blankId: [
+          { required: true, message: validateMsg, trigger: 'blur' }
+        ],
+        blankName: [
           { required: true, message: validateMsg, trigger: 'blur' }
         ],
         emergencyUser: [

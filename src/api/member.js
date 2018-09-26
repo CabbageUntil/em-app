@@ -71,7 +71,10 @@ export function saveMember (form) {
   return request({
     url: '/org/saveMember',
     method: 'post',
-    data: form
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: JSON.stringify({ ...form })
   })
 }
 

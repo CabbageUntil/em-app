@@ -43,6 +43,16 @@ export const constantRouterMap = [
         noCache: false
       },
       hidden: true
+    },
+    {
+      path: 'dashboard_member',
+      component: () => import('@/views/dashboard/member/index'),
+      name: 'DashboardMember',
+      meta: {
+        title: 'DashboardMember',
+        noCache: false
+      },
+      hidden: true
     }]
   }
 ]
