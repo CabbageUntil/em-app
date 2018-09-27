@@ -7,12 +7,11 @@ export function fetchScheduleList (query) {
     params: query
   })
 }
-
 export function removeSchedule (agendaId) {
   return request({
     url: '/org/deleteOrgAgendaByOne/',
     method: 'delete',
-    data: { agendaId }
+    params: { agendaId: agendaId }
   })
 }
 export function  removeSchedules(agendaId) {

@@ -337,7 +337,8 @@ export default {
           // 保存员工信息
           } else if (this.mode === 'edit') {
             saveMember(this.form).then(response => {
-              const data = response.data
+              const data = response
+              console.log('修改信息返回状态：%o',response)
               if (data.code === 0) {
                 this.$message({
                   message: this.$t('table.editMember.message.success'),
@@ -420,7 +421,7 @@ export default {
         blankId: data.blankId,
         sybolicAnimal: data.animal,
         nativePlace: data.nativePlace,
-        telList: data.tel === null ? [
+        telList: data.tel.length === 0 ? [
           {
             id: 0,
             label: '',
@@ -515,6 +516,7 @@ export default {
     } else if (path.indexOf('/member/edit') >= 0) {
       findMemberById(id).then(response => {
         this.mode = 'edit'
+        console.log('用户详细信息：%o',response.data)
         this.fillData(response.data)
       })
     } else {

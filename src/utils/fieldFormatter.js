@@ -100,9 +100,9 @@ export function formatApartmentStatus (val) {
   const i =  parseInt(val);
   switch (i) {
     case 0:
-      return  "<button style='color: #fff;background: #f44336a1;border: none;border-radius: 8px;height:30px;width:100%;'>"+i18n.t(prefix + 'twostatus')+"</button>"
+      return  "<button style='color: #fff;background: #f44336a1;border: none;border-radius: 8px;height:30px;'>"+i18n.t(prefix + 'twostatus')+"</button>"
     case 1:
-      return "<button style='color: #fff;background: #689f38;border: none;border-radius: 8px;height:30px;width:100%;'>"+i18n.t(prefix + 'onestatus')+"</button>"
+      return "<button style='color: #fff;background: #689f38;border: none;border-radius: 8px;height:30px;'>"+i18n.t(prefix + 'onestatus')+"</button>"
     default:
       return null
   }
