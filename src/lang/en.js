@@ -14,7 +14,8 @@ export default {
     memberEdit: 'Edit Member',
     memberCalendar: 'Member Calendar',
     apartmentList: 'Apartment List',
-    ScheduleList: 'ScheduleList'
+    ScheduleList: 'ScheduleList',
+    GrouptList: '群组管理'
   },
   navbar: {
     logOut: 'Log Out',
@@ -135,7 +136,7 @@ export default {
         orgName: 'companyName',
         memberId: 'member of ID',
         memberName: 'memberName',
-        note1: 'Marker of Class',
+        note1: 'Title',
         note2: 'Class of Arrangement',
         note3: 'Personal of Arrangement',
         createDatetime: 'CreateDatetime',

@@ -25,17 +25,16 @@
       <my-vuetable
         :api-url="apiUrl"
         ref="apartmentListTable"
-        :fields="existComTableFields"
-      >
+        :fields="existComTableFields">
         <div
           slot="actions"
           slot-scope="props">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            :content="$t('table.buttonHint.apartment.remove')"
-            placement="top"
-          >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="$t('table.buttonHint.apartment.remove')"
+              placement="top"
+            >
             <el-button
               type="danger"
               @click="onAction('remove', props.rowData, props.rowIndex)"

@@ -14,7 +14,8 @@ export default {
     memberEdit: '编辑成员',
     memberCalendar: '成员日程',
     apartmentList: '部门管理',
-    ScheduleList: '日程管理'
+    ScheduleList: '日程管理',
+    GrouptList: '群组管理'
   },
   navbar: {
     logOut: '退出登录',
@@ -139,7 +140,7 @@ export default {
         memberId: '员工编号',
         memberName: '员工名称',
 
-        note1: '班组备注',
+        note1: '标题',
         note2: '安排事项',
         note3: '个人备注',
         createDatetime: '日期',

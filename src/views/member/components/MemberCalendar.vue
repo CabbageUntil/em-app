@@ -46,13 +46,7 @@ export default {
   data () {
     return {
       pickerOptions: this.getPickerOptions(),
-      eventSources: [
-      /*  {
-          id: '1010',
-          title: '工作任务',
-          description: '全体杨工范德萨发大水范德萨范德萨发递四方速递收到发送到发送到多少分多少分都是范德萨水电费水电费第三方第三方305发生的反倒是发的说法都是范德萨范德萨发生的法第三十大范德萨发开会',
-          start: new Date()
-        }*/],
+      eventSources: [],
       config: {
         locale: this.$i18n.locale.indexOf('zh') >= 0 ? 'zh-cn' : 'en',
         buttonIcons: false,
@@ -160,7 +154,7 @@ export default {
     },
     handleSearchClick () {
       let memberId = this.$route.params.id
-      fetchCalendar(memberId).then(response => {
+      fetchCalendar(memberId,this.datetimeRange[0], this.datetimeRange[1]).then(response => {
         const data = response.data.data
         this.eventSources = data
         console.log("%o",data)

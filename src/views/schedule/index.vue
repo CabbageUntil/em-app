@@ -103,7 +103,7 @@
             :label-width="formLabelWidth">
             <el-input
               v-model="form.note1"
-              type="textarea"
+              type="text"
               clearable
               auto-complete="off"/>
           </el-form-item>

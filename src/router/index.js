@@ -195,7 +195,7 @@ export const asyncRouterMap = [
     meta: {
       title: 'Schedule',
       icon: 'lock',
-      roles: ['creator', 'admin', 'member']
+      roles: ['creator', 'admin']
     },
     children: [{
       path: 'index',
@@ -203,6 +203,26 @@ export const asyncRouterMap = [
       name: 'ScheduleList',
       meta: {
         title: 'ScheduleList',
+        icon: 'apartment',
+        noCache: true
+      }
+    }]
+  },
+  //群组管理
+  {
+    path: '/GroupList',
+    component: Layout,
+    meta: {
+      title: 'GrouptList',
+      icon: 'lock',
+      roles: ['creator', 'admin', 'member']
+    },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/group/index'),
+      name: 'GroupList',
+      meta: {
+        title: 'GroupList',
         icon: 'apartment',
         noCache: true
       }
