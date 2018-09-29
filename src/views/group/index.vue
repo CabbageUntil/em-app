@@ -59,7 +59,7 @@
           <el-table
             border
             :data="tableData4"
-            style="width: 50%"
+            style="width: 100%"
             max-height="250">
             <el-table-column
               fixed
@@ -70,6 +70,11 @@
             <el-table-column
               prop="system_name"
               label="系统名称"
+              width="240">
+            </el-table-column>
+            <el-table-column
+              prop="expire_time"
+              label="过期时间"
               width="240">
             </el-table-column>
             <el-table-column
@@ -138,121 +143,154 @@
 
 </template>
 <script>
-  name: 'GroupList'
-  export default {
-    data() {
-      return {
-        visible: false,
-        name:'',
-        form: {
-          mobile: '',
-          expire_time: '',
-          delivery: false,
-          remark: '',
-          sid: '',
-          allow_reboot: false,
-          allow_assign: false,
-          alias: ''
-        },
-        hostform: {
-          sid: '',
-          system_name: ''
-        },
-        tableData4: [],
-        tableData3: [{
-          id: '1',
-          phone: '1111111',
-          name: '张三'
-        }, {
-          id: '2',
-          phone: '2222222',
-          name: '李四'
-        }, {
-          id: '3',
-          phone: '3333333',
-          name: '王小虎'
-        }, {
-          id: '4',
-          phone: '444444',
-          name: '万凯'
-        }, {
-          id: '5',
-          phone: '5555555',
-          name: '张扬'
-        }, {
-          id: '5',
-          phone: '6666666',
-          name: '李虎'
-        }, {
-          id: '7',
-          phone: '7777777',
-          name: '张晓凯'
-        }, {
-          id: '8',
-          phone: '8888888',
-          name: '武鸣'
-        }, {
-          id: '9',
-          phone: '9999999',
-          name: '王小虎'
-        }, {
-          id: '10',
-          phone: '10101010',
-          name: '龙王'
-        }, {
-          id: '11',
-          phone: '110110111011',
-          name: '王小虎'
-        }],
-        multipleSelection: [],
-        outerVisible: false,
-        innerVisible: false,
-        main_content: false,
-        formLabelWidth: '120px'
+import axios from 'axios'
+import { getServer } from '@/api/company'
+name: 'GroupList'
+export default {
+  data() {
+    return {
+      visible: false,
+      name:'',
+      form: {
+        mobile: '',
+        expire_time: '',
+        delivery: false,
+        remark: '',
+        sid: '',
+        allow_reboot: false,
+        allow_assign: false,
+        alias: ''
+      },
+      hostform: {
+        sid: '',
+        system_name: ''
+      },
+      tableData4: [],
+      tableData3: [{
+        id: '1',
+        phone: '1111111',
+        name: '张三'
+      }, {
+        id: '2',
+        phone: '2222222',
+        name: '李四'
+      }, {
+        id: '3',
+        phone: '3333333',
+        name: '王小虎'
+      }, {
+        id: '4',
+        phone: '444444',
+        name: '万凯'
+      }, {
+        id: '5',
+        phone: '5555555',
+        name: '张扬'
+      }, {
+        id: '5',
+        phone: '6666666',
+        name: '李虎'
+      }, {
+        id: '7',
+        phone: '7777777',
+        name: '张晓凯'
+      }, {
+        id: '8',
+        phone: '8888888',
+        name: '武鸣'
+      }, {
+        id: '9',
+        phone: '9999999',
+        name: '王小虎'
+      }, {
+        id: '10',
+        phone: '10101010',
+        name: '龙王'
+      }, {
+        id: '11',
+        phone: '110110111011',
+        name: '王小虎'
+      }],
+      multipleSelection: [],
+      outerVisible: false,
+      innerVisible: false,
+      main_content: false,
+      formLabelWidth: '120px'
+    }
+  },
+  methods: {
+    handleEdit(index, row) {
+      this.form.alias = row.name;
+      this.form.mobile  = row.phone;
+      this.outerVisible = true;
+    },
+    findInfo(index, row) {
+      //读取常用商品列表
+      axios.get('https://www.easy-mock.com/mock/5b8b30dbf032f03c5e71de7f/kuaican/oftenGoods')
+        .then(response => {
+          this.tableData4 = [
+            {
+              sid: '9566',
+              system_name: 'win20008 X64',
+              expire_time: '2018-10-12'
+            },
+            {
+              sid: '9568',
+              system_name: 'win20008 X64',
+              expire_time: '2018-10-25'
+            },
+            {
+              sid: '9563',
+              system_name: 'win20008 X64',
+              expire_time: '2018-10-30'
+            },
+            {
+              sid: '9564',
+              system_name: 'win20008 X64',
+              expire_time: '2018-10-18'
+            }
+          ];
+          this.visible ? this.hide() : this.show()
+        })
+        .catch(error => {
+          console.log(error);
+          alert('网络错误，不能访问');
+        })
+      /*getServer().then(response => {
+        this.tableData4 = response.data;
+        this.visible ? this.hide() : this.show()
+      })*/
+      .catch(error => {
+        console.log(error);
+        alert('网络错误，不能访问');
+      })
+    },
+    show () {
+      this.visible = true
+      document.addEventListener('click', this.hidePanel, false)
+    },
+    hide () {
+      this.visible = false
+      document.removeEventListener('click', this.hidePanel, false)
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
       }
     },
-    methods: {
-      handleEdit(index, row) {
-        this.form.alias = row.name;
-        this.form.mobile  = row.phone;
-        this.outerVisible = true;
-      },
-      findInfo(index, row) {
-        const data = [{
-          sid: row.phone,
-          system_name: 'win2008 x64'
-        }, {
-          sid: '9655',
-          system_name: 'win2008 x64'
-        }]
-        this.tableData4 = data
-        this.visible ? this.hide() : this.show()
-      },
-      show () {
-        this.visible = true
-        document.addEventListener('click', this.hidePanel, false)
-      },
-      hide () {
-        this.visible = false
-        document.removeEventListener('click', this.hidePanel, false)
-      },
-      handleDelete(index, row) {
-        console.log(index, row);
-      },
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      }
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
     }
   }
+
+}
 </script>
 
 <style scoped>

@@ -85,6 +85,7 @@
 <script>
 import MyVuetable from '@/components/Table/MyVuetable'
 import { existApartmentTableFields } from './fields.js'
+
 import { removeApartment , addApartment , selectdeptList } from '@/api/apartment'
 export default {
   name: 'Apartment',

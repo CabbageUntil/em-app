@@ -67,7 +67,7 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
-
+import { logout } from '@/api/login'
 export default {
   components: {
     Breadcrumb,
@@ -88,8 +88,15 @@ export default {
       this.$store.dispatch('toggleSideBar')
     },
     logout () {
-      this.$store.dispatch('Logout').then(() => {
-        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+     /* this.$store.dispatch('Logout').then(() => {
+        window.location.href = 'https://passport.dianchat.net/pass/service_login'
+        /!*location.reload()// In order to re-instantiate the vue-router object to avoid bugs*!/
+      })*/
+      logout().then(response => {
+        let code = response.code
+        if(code === 0){
+          window.location.href = 'https://passport.dianchat.net/pass/logout?callback=https://passport.dianchat.net/pass/service_login?callback=http://localhost:8092/login'
+        }
       })
     }
   }

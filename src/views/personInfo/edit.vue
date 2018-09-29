@@ -196,7 +196,6 @@
         </el-col>
       </el-form-item>
       <!-- 生肖 -->
-      <symbolic-animal :check-value="form.sybolicAnimal"/>
       <!-- 籍贯 -->
       <el-form-item
         :label="$t('form.personalInfo.field.nativePlace.label')"
@@ -338,7 +337,6 @@ export default {
           } else if (this.mode === 'edit') {
             saveMember(this.form).then(response => {
               const data = response
-              console.log('修改信息返回状态：%o',response)
               if (data.code === 0) {
                 this.$message({
                   message: this.$t('table.editMember.message.success'),
