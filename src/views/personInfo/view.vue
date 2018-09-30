@@ -4,124 +4,120 @@
       type="flex"
       justify="center">
       <el-card class="box-card" style="color: #5D4037;">
-        <el-row class="card-item" type="flex" justify="end">
-          <el-col :span="8">
-            <el-tag type="warning" size="small" >{{ $t('form.personalInfo.field.name.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ form.memberName }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.education.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ formatEducation(form.education) }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="3">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.sex.label') }}</el-tag>
-          </el-col>
-          <el-col :span="2">{{ formatSex(form.sex) }}</el-col>
-          <el-col :span="3">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.marital.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ formatMaritalStatus(form.maritalStatus) }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.birthday.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ parseTime(form.birthday) }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.IDCardExp.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ parseTime(form.idCardExp) }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.emergencyContact.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ form.emergencyUser + ' ' + form.emergencyMobile }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.symbolicAnimal.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ formatSymbolicAnimal(form.sybolicAnimal) }}</el-col>
-        </el-row>
-        <el-row class="card-item">
-          <el-col :span="8">
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.nativePlace.label') }}</el-tag>
-          </el-col>
-          <el-col :span="16">{{ form.nativePlace }}</el-col>
-        </el-row>
-        <el-row
-          v-if="phoneList"
-          class="card-item">
-          <el-row>
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.tel.label') }}</el-tag>
-          </el-row>
-          <el-row
-            v-for="item in phoneList"
-            :key="item.id"
-            class="list-item">
-            <el-col :span="8">
-              <el-tag type="success" size="mini">{{ item.label }}</el-tag>
-            </el-col>
-            <el-col :span="16">{{ item.content }}</el-col>
-          </el-row>
-        </el-row>
-        <el-row
-          v-if="emailList"
-          class="card-item">
-          <el-row>
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.email.label') }}</el-tag>
-          </el-row>
-          <el-row
-            v-for="item in emailList"
-            :key="item.id"
-            class="list-item">
-            <el-col :span="8">
-              <el-tag type="success" size="mini">{{ item.label }}</el-tag>
-            </el-col>
-            <el-col :span="16">{{ item.content }}</el-col>
-          </el-row>
-        </el-row>
-        <el-row
-          v-if="addressList"
-          class="card-item">
-          <el-row>
-            <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.address.label') }}</el-tag>
-          </el-row>
-          <el-row
-            v-for="item in addressList"
-            :key="item.id"
-            class="list-item">
-            <el-col :span="8">
-              <el-tag type="success" size="mini">{{ item.label }}</el-tag>
-            </el-col>
-            <el-col :span="16">{{ item.content }}</el-col>
-          </el-row>
-        </el-row>
-        <el-row
-          v-if="otherList"
-          class="card-item">
-          <el-row>
-            <el-tag type="warning" size="small">
-              {{ $t('form.personalInfo.field.other.label') }}
-            </el-tag>
-          </el-row>
-          <el-row
-            v-for="item in otherList"
-            :key="item.id"
-            class="list-item">
-            <el-col :span="8">
-              <el-tag type="success" size="mini">{{ item.label }}</el-tag>
-            </el-col>
-            <el-col :span="16">{{ item.content }}</el-col>
-          </el-row>
-        </el-row>
+        <table style="width: 100%">
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small" >{{ $t('form.personalInfo.field.name.label') }}</el-tag>
+            </td>
+            <td>{{ form.memberName }}</td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.sex.label') }}</el-tag>
+            </td>
+            <td>{{ formatSex(form.sex) }}</td>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.marital.label') }}</el-tag>
+            </td>
+            <td>{{ formatMaritalStatus(form.maritalStatus) }}</td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.education.label') }}</el-tag>
+            </td>
+            <td>{{ formatEducation(form.education) }}</td>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.symbolicAnimal.label') }}</el-tag>
+            </td>
+            <td>
+              <el-col>{{ formatSymbolicAnimal(form.sybolicAnimal) }}</el-col>
+            </td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.birthday.label') }}</el-tag>
+            </td>
+            <td>
+              <el-col >{{ parseTime(form.birthday) }}</el-col>
+            </td>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.IDCardExp.label') }}</el-tag>
+            </td>
+            <td>{{ parseTime(form.idCardExp) }}</td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.emergencyContact.label') }}</el-tag>
+            </td>
+            <td>{{ form.emergencyUser + ' ' + form.emergencyMobile }}</td>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.nativePlace.label') }}</el-tag>
+            </td>
+            <td>{{ form.nativePlace }}</td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.tel.label') }}</el-tag>
+            </td>
+            <td>
+              <el-row
+                v-if="phoneList"
+                class="card-item">
+                <el-row
+                  v-for="item in phoneList"
+                  :key="item.id">
+                  {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+                </el-row>
+              </el-row>
+            </td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.email.label') }}</el-tag>
+            </td>
+            <td>
+              <el-row
+                v-if="emailList"
+                class="card-item">
+                <el-row
+                  v-for="item in emailList"
+                  :key="item.id">
+                  {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+                </el-row>
+              </el-row>
+            </td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.address.label') }}</el-tag>
+            </td>
+            <td>
+              <el-row
+                v-if="addressList"
+                class="card-item">
+                <el-row
+                  v-for="item in addressList"
+                  :key="item.id">
+                  {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+                </el-row>
+              </el-row>
+            </td>
+          </tr>
+          <tr>
+            <td class="tile">
+              <el-tag type="warning" size="small">
+                {{ $t('form.personalInfo.field.other.label') }}
+              </el-tag>
+            </td>
+            <td>
+              <el-row
+                v-for="item in otherList"
+                :key="item.id">
+                {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+              </el-row>
+            </td>
+          </tr>
+        </table>
       </el-card>
     </el-row>
   </div>
@@ -211,7 +207,7 @@ export default {
 
 <style lang="stylus" scoped>
   .box-card
-    min-width: 640px
+    min-width: 680px
     max-width: 1000px
     margin-top: 10px
   .card-item
@@ -220,4 +216,8 @@ export default {
     padding-left: 8%
     line-height: 25px
     border-bottom: none
+  tr
+    line-height: 32px
+  .tile
+    text-align: left
 </style>

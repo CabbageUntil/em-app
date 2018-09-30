@@ -164,7 +164,9 @@ export default {
         view: '查看',
         edit: '编辑',
         calendar: '日程',
-        remove: '移除'
+        remove: '移除',
+        server_view: '查看服务器',
+        assign_server: '分配服务器'
       },
       apartment: {
         remove: '移除',

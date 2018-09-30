@@ -11,10 +11,14 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/org': {
-            target: 'http://localhost:8088/',
-            changeOrigin: true
-        }
+      '/org': {
+          target: 'http://localhost:8088/',
+          changeOrigin: true
+      },
+      '/rdp': {
+        target: 'https://apis.canshu.info/',
+        changeOrigin: true
+      }
     },
 
     // Various Dev Server settings

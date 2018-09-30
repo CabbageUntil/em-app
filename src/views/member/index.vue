@@ -33,10 +33,9 @@
             v-show="isAddUserBtnShow(props.rowData.member_status)"
           >
             <el-button
-              class="mini ui green button"
+              type="success" icon="el-icon-search"  size="mini"  plain
               @click="onAction('add', props.rowData, props.rowIndex)"
             >
-              <i class="add user icon"/>
             </el-button>
           </el-tooltip>
           <!-- 查看 -->
@@ -47,10 +46,9 @@
             placement="top"
           >
             <el-button
-              class="mini ui green button"
+              type="success" icon="el-icon-search"  size="mini"  plain
               @click="onAction('view', props.rowData, props.rowIndex)"
             >
-              <i class="unhide icon"/>
             </el-button>
           </el-tooltip>
           <!-- 编辑 -->
@@ -62,10 +60,9 @@
             v-show="isEditUserBtnShow()"
           >
             <el-button
-              class="mini ui green button"
+              type="primary" icon="el-icon-edit"   size="mini"  plain
               @click="onAction('edit', props.rowData, props.rowIndex)"
             >
-              <i class="edit icon"/>
             </el-button>
           </el-tooltip>
           <!-- 解雇 -->
@@ -77,10 +74,9 @@
             v-show="isRemoveUserBtnShow(props.rowData.member_status)"
           >
             <el-button
-              class="mini ui red button"
+              type="danger" icon="el-icon-delete" size="mini"  plain
               @click="onAction('remove', props.rowData, props.rowIndex)"
             >
-              <i class="remove user icon"/>
             </el-button>
           </el-tooltip>
           <!-- 日程 -->
@@ -92,13 +88,85 @@
             v-show="isCalendarBtnShow(props.rowData.member_status)"
           >
             <el-button
-              class="mini ui olive button"
+              type="success" icon="el-icon-date"  size="mini"  plain
               @click="onAction('calendar', props.rowData, props.rowIndex)"
             >
-              <i class="calendar outline icon"/>
             </el-button>
           </el-tooltip>
+          <!--查看已经分配的虚拟主机-->
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="$t('table.buttonHint.memberList.server_view')"
+            placement="top"
+            v-show="isRemoveUserBtnShow(props.rowData.member_status)"
+          >
+            <el-button
+              type="primary" icon="el-icon-view" size="mini"
+              @click="onAction('222', props.rowData, props.rowIndex)"
+            >
+            </el-button>
+          </el-tooltip>
+          <!--分配虚拟主机-->
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="$t('table.buttonHint.memberList.assign_server')"
+            placement="top"
+            v-show="isRemoveUserBtnShow(props.rowData.member_status)"
+          >
+            <el-button
+              type="primary" icon="el-icon-upload" size="mini"
+              @click="onAction('sign_server', props.rowData, props.rowIndex)"
+            >
+            </el-button>
+          </el-tooltip>
+
+          <!-- 分配虚拟主机 -->
+          <el-dialog title="分配主机" :visible.sync="outerVisibles">
+            <el-dialog
+              width="30%"
+              title="查询虚拟主机"
+              :visible.sync="innerVisible"
+              append-to-body>
+            </el-dialog>
+            <el-form :model="form">
+              <el-form-item label="名称" :label-width="formLabelWidth">
+                <el-input v-model="form.alias" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="手机号" :label-width="formLabelWidth">
+                <el-input v-model="form.mobile" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="选择服务器" :label-width="formLabelWidth">
+                <el-button type="success" @click="innerVisible = true">选择</el-button>
+              </el-form-item>
+              <el-form-item label="权限" :label-width="formLabelWidth">
+                <el-switch v-model="form.allow_assign"></el-switch>
+                <span class="demonstration">允许修改账户</span>
+                <el-switch v-model="form.allow_reboot"></el-switch>
+                <span class="demonstration">允许重启服务器</span>
+              </el-form-item>
+              <el-form-item label="到期时间" :label-width="formLabelWidth">
+                <div class="block">
+                  <el-date-picker
+                    v-model="form.expire_time"
+                    type="date"
+                    placeholder="选择日期">
+                  </el-date-picker>
+                  <el-switch v-model="form.delivery"></el-switch>
+                  <span class="demonstration">默认</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="备注" :label-width="formLabelWidth">
+                <el-input type="textarea" v-model="form.remark"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="outerVisibles = false">确定</el-button>
+            </div>
+          </el-dialog>
         </div>
+
       </my-vuetable>
     </el-row>
   </div>
@@ -106,15 +174,12 @@
 
 <script>
 import Vue from 'vue'
+import axios from 'axios'
 import MyVuetable from '@/components/Table/MyVuetable'
 import MemberDetailRow from './components/MemberDetailRow'
-
 import { memberListTableFields } from './fields.js'
-
 import { addMember, removeMember } from '@/api/member'
-
 Vue.component('member-detail-row', MemberDetailRow)
-
 export default {
   name: 'MemberList',
   components: {
@@ -124,7 +189,20 @@ export default {
     return {
       // 0 待审核、1 已加入、2 已离职、3 全部
       checkedValue: 1,
-      roles: this.$store.getters.roles
+      roles: this.$store.getters.roles,
+      outerVisibles: false,
+      innerVisible: false,
+      form: {
+        mobile: '',
+        expire_time: '',
+        delivery: false,
+        remark: '',
+        sid: '',
+        allow_reboot: false,
+        allow_assign: false,
+        alias: ''
+      },
+      formLabelWidth: '120px'
     }
   },
   computed: {
@@ -166,6 +244,27 @@ export default {
         })
       } else if (action === 'view') {
         this.$router.push({ path: '/member/view/' + rowData.id })
+      } else if (action === 'sign_server') {
+        const params = {
+          token:'087e6d939b48eb0232eea7ce45cd4b22',
+          app_name: 'aanets'
+        }
+        axios({
+          method: 'post',
+          url:'/rdp/server',
+          data:params
+        }).then((res)=>{
+          console.log(res.data)
+        });
+        /*axios.post('/rdp/assign_list',
+          {params:{
+              token:'f496750e480d3f72570124c45a72e367',
+              app_name: 'aanets'
+            }}
+        ).then(resp=> {
+          console.log(resp.data)
+        })*/
+        this.outerVisibles = true
       } else if (action === 'edit') {
         this.$router.push({ path: '/member/edit/' + rowData.id })
       } else if (action === 'remove') {

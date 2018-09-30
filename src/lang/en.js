@@ -160,7 +160,9 @@ export default {
         view: 'view',
         edit: 'edit',
         calendar: 'calendar',
-        remove: 'remove'
+        remove: 'remove',
+        server_view: 'server of view',
+        assign_server: 'assign server'
       },
       apartment: {
         remove: 'remove',
