@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { FullCalendar } from 'vue-full-calendar'
+import { FullCalendar } from 'ljl-vue-full-calendar'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
 
