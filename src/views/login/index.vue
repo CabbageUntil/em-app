@@ -9,6 +9,7 @@ export default {
   name: 'Login',
   mounted () {
     let loginToken = this.$route.query['jwt-token']
+     
     if (loginToken) {
       this.$store.dispatch('Login', loginToken).then(() => {
         this.$router.push({ path: '/' })

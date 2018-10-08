@@ -16,12 +16,16 @@ const user = {
     memberName: '',
     // 角色
     roles: [],
-
+    //用户token
+    token: '',
     loginCom: false,
     logoutCom: false
   },
 
   mutations: {
+    SET_TOKEN: (state, token) => {
+      state.token = token
+    },
     SET_NAME: (state, name) => {
       state.name = name
     },
@@ -58,6 +62,8 @@ const user = {
       return new Promise((resolve, reject) => {
         login(token.trim()).then(response => {
           const data = response
+          console.log(data)
+          commit('SET_TOKEN', data.data.token)
           if (data.code !== 0) {
             reject(new Error())
           } else {

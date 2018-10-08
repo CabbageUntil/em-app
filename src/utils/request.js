@@ -28,6 +28,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     const res = response.data
+    //alert('登录系统放回的信息:%o' + response.data)
     if (res.code !== 0) {
       // -1000: 登录失败 -1001: 需要登录
       if (res.code === -1000 || res.code === -1001) {

@@ -83,6 +83,6 @@ export const memberListTableFields = [
     title: () => i18n.t(prefix + '.memberList.operation'),
     titleClass: 'center aligned',
     dataClass: 'center aligned',
-    width: '20%'
+    width: '23%'
   }
 ]

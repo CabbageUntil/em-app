@@ -125,26 +125,89 @@
           <!-- 分配虚拟主机 -->
           <el-dialog title="分配主机" :visible.sync="outerVisibles">
             <el-dialog
-              width="30%"
-              title="查询虚拟主机"
+              width = "30%"
               :visible.sync="innerVisible"
               append-to-body>
+              <el-table
+                :data="hostData"
+                style="width: 100%">
+                <el-table-column
+                  prop="sid"
+                  label="主机编号"
+                  sortable
+                  width="180">
+                </el-table-column>
+                <el-table-column
+                  prop="ips"
+                  label="IP地址"
+                  sortable
+                  width="180">
+                </el-table-column>
+                <el-table-column label="操作">
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="selectHost(scope.$index, scope.row)">选择</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-dialog>
             <el-form :model="form">
-              <el-form-item label="名称" :label-width="formLabelWidth">
-                <el-input v-model="form.alias" autocomplete="off"></el-input>
+              <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-input
+                v-model="form.alias"
+                :disabled="true"
+                autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="手机号" :label-width="formLabelWidth">
-                <el-input v-model="form.mobile" autocomplete="off"></el-input>
+              <el-form-item
+              label="账号"
+              :label-width="formLabelWidth">
+                <el-input
+                :disabled="true"
+                v-model="form.mobile"
+                autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="选择服务器" :label-width="formLabelWidth">
-                <el-button type="success" @click="innerVisible = true">选择</el-button>
+              <el-form-item
+              label="服务编号"
+              v-show = "sid_visible"
+              :label-width="formLabelWidth">
+                <el-input
+                :disabled="true"
+                v-model="form.sid"
+                autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="权限" :label-width="formLabelWidth">
-                <el-switch v-model="form.allow_assign"></el-switch>
-                <span class="demonstration">允许修改账户</span>
-                <el-switch v-model="form.allow_reboot"></el-switch>
-                <span class="demonstration">允许重启服务器</span>
+              <el-form-item
+              label="IP地址"
+              v-show="ips_visible"
+              :label-width="formLabelWidth">
+                <el-input
+                :disabled="true"
+                v-model="form.ips"
+                autocomplete="off"></el-input>
+              </el-form-item>
+
+              <el-form-item
+              label="选择服务器账号"
+              v-show="ips_visible"
+              :label-width="formLabelWidth">
+                <el-radio-group v-model="form.username">
+                  <el-radio v-for="city in usernames" :label="city" :key="city">{{city}}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item
+              label="选择服务器"
+              v-show="visible"
+              :label-width="formLabelWidth">
+                <el-button
+                type="success"
+                @click="innerVisible = true">选择</el-button>
+              </el-form-item>
+              <el-form-item
+              label="权限"
+              :label-width="formLabelWidth">
+                <el-checkbox v-model="form.allow_assign" label="1">允许修改账户</el-checkbox>
+                <el-checkbox v-model="form.allow_reboot" label="1">允许重启服务器</el-checkbox>
               </el-form-item>
               <el-form-item label="到期时间" :label-width="formLabelWidth">
                 <div class="block">
@@ -153,20 +216,20 @@
                     type="date"
                     placeholder="选择日期">
                   </el-date-picker>
-                  <el-switch v-model="form.delivery"></el-switch>
-                  <span class="demonstration">默认</span>
+                  <el-radio v-model="form.delivery" label="1">默认</el-radio>
                 </div>
               </el-form-item>
               <el-form-item label="备注" :label-width="formLabelWidth">
-                <el-input type="textarea" v-model="form.remark"></el-input>
+                <el-input
+                type="textarea"
+                v-model="form.remark"></el-input>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-              <el-button @click="outerVisibles = false">确定</el-button>
+              <el-button @click="saveHost">确定</el-button>
             </div>
           </el-dialog>
         </div>
-
       </my-vuetable>
     </el-row>
   </div>
@@ -188,20 +251,27 @@ export default {
   data () {
     return {
       // 0 待审核、1 已加入、2 已离职、3 全部
+      usernames: [],
+      visible: true,
+      ips_visible: false,
+      sid_visible: false,
       checkedValue: 1,
       roles: this.$store.getters.roles,
       outerVisibles: false,
       innerVisible: false,
       form: {
+        username: '',
         mobile: '',
         expire_time: '',
-        delivery: false,
+        ips: '',
+        delivery: 0,
         remark: '',
         sid: '',
-        allow_reboot: false,
-        allow_assign: false,
+        allow_reboot: 0,
+        allow_assign: 0,
         alias: ''
       },
+      hostData: [],
       formLabelWidth: '120px'
     }
   },
@@ -214,7 +284,27 @@ export default {
     }
   },
   methods: {
+    saveHost() {
+      console.log('是否允许用户重启' + this.allow_reboot)
+      this.outerVisibles = false
+    },
+    selectHost(index,row) {
+      this.form.sid = row.sid
+      this.form.ips = row.ips
+      const arr = row.users
+      for (var index in arr) {
+        this.usernames.push(arr[index].username)
+      }
+      this.innerVisible = false
+      this.sid != ''  ? this.visible = false : this.visible = true
+      this.sid != ''  ? this.sid_visible = true : this.sid_visible = false
+      this.sid != ''  ? this.ips_visible = true : this.ips_visible = false
+    },
     onAction (action, rowData, rowIndex) {
+      this.visible = true
+      this.ips_visible = false
+      this.sid_visible = false
+      this.usernames = []
       let tableObj = this.$refs.memberListTable.$refs.vuetable
       if (action === 'add') {
         this.$confirm(this.$t('table.buttonAction.addMember.message.content').replace('%{name}', rowData.name),
@@ -245,8 +335,10 @@ export default {
       } else if (action === 'view') {
         this.$router.push({ path: '/member/view/' + rowData.id })
       } else if (action === 'sign_server') {
+        this.form.alias = rowData.name
+        this.form.mobile = rowData.onenetOwner
         const params = {
-          token:'087e6d939b48eb0232eea7ce45cd4b22',
+          token: this.$store.state.user.token,
           app_name: 'aanets'
         }
         axios({
@@ -254,16 +346,118 @@ export default {
           url:'/rdp/server',
           data:params
         }).then((res)=>{
-          console.log(res.data)
-        });
-        /*axios.post('/rdp/assign_list',
-          {params:{
-              token:'f496750e480d3f72570124c45a72e367',
-              app_name: 'aanets'
-            }}
-        ).then(resp=> {
-          console.log(resp.data)
-        })*/
+          //this.hostData = res.data.result
+          this.hostData = [
+            {
+              sid: '9417',
+              system: "unknown",
+              network_state: 1,
+              system_name: "win2008 x64",
+              ips: "110.165.41.27",
+              online: 0,
+              group_id: 0,
+              last_remote: "",
+              local: 0,
+              port: 3389,
+              rdp: 12490,
+              remark: "",
+              expire_time: 1567176468,
+              allow_reboot: 1,
+              allow_upinfo: 1,
+              rdp_show: 1,
+              users: [
+                  {
+                      "username": "administrator",
+                      "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                      "groups": "",
+                      "state": "",
+                      "userDes": ""
+                  },
+                    {
+                      "username": "user",
+                      "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                      "groups": "",
+                      "state": "",
+                      "userDes": ""
+                  },
+                    {
+                      "username": "admin",
+                      "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                      "groups": "",
+                      "state": "",
+                      "userDes": ""
+                  }
+              ]
+          },
+          {
+              sid: '9478',
+              system: "unknown",
+              network_state: 1,
+              system_name: "win2008 x64",
+              ips: "110.165.61.62",
+              online: 0,
+              group_id: 0,
+              last_remote: "",
+              local: 0,
+              port: 3389,
+              rdp: 12490,
+              remark: "",
+              expire_time: 1567176468,
+              allow_reboot: 1,
+              allow_upinfo: 1,
+              rdp_show: 1,
+              users: [
+                {
+                  "username": "user",
+                  "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                  "groups": "",
+                  "state": "",
+                  "userDes": ""
+                },
+                {
+                  "username": "admin",
+                  "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                  "groups": "",
+                  "state": "",
+                  "userDes": ""
+              }]
+          },
+          {
+              sid: '10001',
+              system: "unknown",
+              network_state: 1,
+              system_name: "win2008 x64",
+              ips: "110.164.61.62",
+              online: 0,
+              group_id: 0,
+              last_remote: "",
+              local: 0,
+              port: 3389,
+              rdp: 12490,
+              remark: "",
+              expire_time: 1567176468,
+              allow_reboot: 1,
+              allow_upinfo: 1,
+              rdp_show: 1,
+              users: [
+                {
+                  "username": "penghaijie",
+                  "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                  "groups": "",
+                  "state": "",
+                  "userDes": ""
+                },
+                {
+                  "username": "admin",
+                  "password": "WVdSdGFXNGhVV0V6TWc9PQ==",
+                  "groups": "",
+                  "state": "",
+                  "userDes": ""
+              }]
+          }
+          ]
+          
+        })
         this.outerVisibles = true
       } else if (action === 'edit') {
         this.$router.push({ path: '/member/edit/' + rowData.id })
