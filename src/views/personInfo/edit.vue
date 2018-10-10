@@ -530,4 +530,6 @@ export default {
   .history-selector
     margin-left: 10px
     width: 400px
+  label-value-list
+    padding-top: 25px;
 </style>

@@ -58,6 +58,28 @@ export const constantRouterMap = [
 ]
 
 export const asyncRouterMap = [
+  //分组
+   {
+      path: '/gropList',
+      component: Layout,
+      meta: {
+        roles: ['visitor'],
+        title: '群组管理',
+        icon: 'example'
+      },
+      children: [
+        {
+        path: 'list',
+        component: () => import('@/views/group/groupList'),
+        name: '群组信息',
+        meta: {
+          title: '群组信息',
+          icon: 'list'
+        }
+      }
+    ]
+  },
+
   // 加入公司
   {
     path: '/joinCom',
@@ -203,26 +225,6 @@ export const asyncRouterMap = [
       name: 'ScheduleList',
       meta: {
         title: 'ScheduleList',
-        icon: 'apartment',
-        noCache: true
-      }
-    }]
-  },
-  //群组管理
-  {
-    path: '/GroupList',
-    component: Layout,
-    meta: {
-      title: 'GrouptList',
-      icon: 'lock',
-      roles: ['creator', 'admin', 'member']
-    },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/group/index'),
-      name: 'GroupList',
-      meta: {
-        title: 'GroupList',
         icon: 'apartment',
         noCache: true
       }

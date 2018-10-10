@@ -54,9 +54,11 @@ export default {
   .dashboard-member-container {
     background-color: #e3e3e3;
     min-height: 100vh;
-    padding: 50px 60px 0px;
+    line-height: 1.2em;
+    padding: 50px 60px 0px 0px;
   }
   .welcome-text {
+    padding-bottom: 10px;
     text-align: center;
   }
 </style>

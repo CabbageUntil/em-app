@@ -57,5 +57,6 @@ export default {
   }
   .welcome-text {
     text-align: center;
+    padding-bottom: 10px;
   }
 </style>

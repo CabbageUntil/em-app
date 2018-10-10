@@ -38,4 +38,8 @@ export default {
   padding: 32px;
   background-color: rgb(240, 242, 245);
 }
+.welcome-text {
+    text-align: center;
+    padding-bottom: 10px;
+  }
 </style>
