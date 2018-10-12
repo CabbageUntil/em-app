@@ -3,10 +3,10 @@
     <el-tabs type="border-card">
       <el-tab-pane  label="加入的群组">
         <el-container>
-          <el-aside>
+          <el-aside width="200">
             <el-row>
               <el-button icon = "el-icon-location" type="primary butList" >
-              <p style="font-size:15px;padding-top:30px;">加入的群组数：<span style="
+              <p style="font-size:15px;padding-top:30px;">加入群组数：<span style="
               font-size: 18px;color: #EEEEEE;">12</span></p>
               </el-button>
             </el-row>
@@ -16,25 +16,20 @@
             </el-row>
           </el-aside>
           <el-container>
-            <el-main>
-              <el-table
-              :data="tableData"
-              style="width: 100%">
+            <el-table
+              :data="joinData"
+              style="width: 100%"
+              max-height="580">
               <el-table-column
+                prop="name"
                 label="群组名称"
-                width="180">
-                <template slot-scope="scope">
-                  <span style="margin-left: 10px">{{ scope.row.name }}</span>
-                </template>
+                width="400">
               </el-table-column>
               <el-table-column
-                label="日期"
-                width="180">
-                <template slot-scope="scope">
-                  <i class="el-icon-time"></i>
-                  <span style="margin-left: 10px">{{ scope.row.date }}</span>
-                </template>
-              </el-table-column>
+                prop="createDate"
+                label="创建日期"
+                width="400">
+              </el-table-column> 
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -66,25 +61,20 @@
             </el-row>
           </el-aside>
           <el-container>
-            <el-main>
-              <el-table
-              :data="tableData"
-              style="width: 100%">
+            <el-table
+              :data="joinData"
+              style="width: 100%"
+              max-height="580">
               <el-table-column
+                prop="name"
                 label="群组名称"
-                width="180">
-                <template slot-scope="scope">
-                  <span style="margin-left: 10px">{{ scope.row.name }}</span>
-                </template>
+                width="400">
               </el-table-column>
               <el-table-column
-                label="日期"
-                width="180">
-                <template slot-scope="scope">
-                  <i class="el-icon-time"></i>
-                  <span style="margin-left: 10px">{{ scope.row.date }}</span>
-                </template>
-              </el-table-column>
+                prop="createDate"
+                label="创建日期"
+                width="400">
+              </el-table-column> 
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -97,7 +87,6 @@
                 </template>
               </el-table-column>
             </el-table>
-            </el-main>
           </el-container>
         </el-container>
       </el-tab-pane>
@@ -107,7 +96,7 @@
       title="创建群组"
       :visible.sync="dialogCreateGroup"
       width="30%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form   label-width="100px" class="demo-ruleForm">
         <el-form-item label="群组名称" prop="name">
           <el-input v-model="createForm.groupName"></el-input>
         </el-form-item>
@@ -125,13 +114,13 @@
       title="加入群组"
       :visible.sync="dialogJoinGroup"
       width="40%">
-      <el-form :model="form">
-          
+      <el-form >
+          <el-tag type="success" size="max">请查找群组</el-tag>
           <el-select
             filterable
             clearable
             :is-required="true"
-            v-model="form.groupId"
+            v-model="joinForm.groupId"
             placeholder="请选择您想加入的群组">
             <el-option
               v-for="item in add_options"
@@ -140,17 +129,20 @@
               :value="item.groupId">
             </el-option>
           </el-select>
+          <el-form-item label="审批人">
+            <el-input v-model="joinForm.userName" placeholder="姓名"></el-input>
+          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="joinGroup">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
 import axios from 'axios'
-import { createGroup, selectgrouptList } from '@/api/group'
+import { createGroup, selectgrouptList, joinGroup } from '@/api/group'
 name: 'GroupList'
 export default {
     data() {
@@ -158,14 +150,17 @@ export default {
         active: 0,
         dialogCreateGroup: false,
         dialogJoinGroup: false,
-         add_option: [],
+        add_option: [],
         createForm: {
           groupName: '',
           userName: ''
         },
-        form: {
-          groupId: ''
+        ruleForm: {},
+        joinForm: {
+          groupId: '',
+          userName: ''
         },
+        joinData: [],
         tableData: [{
           date: '2016-05-02',
           name: '佛山季华园技术中心',
@@ -188,13 +183,36 @@ export default {
     },
     methods: {
       enterGroup(index, row) {
-        this.$alert("加入群组");
+        this.$alert("加入群组"+row.name);
       },
       exiteGroup(index, row) {
         this.$alert("退出群组");
       },
       removeGroup(index, row) {
         this.$alert("解散群组");
+      },
+      joinGroup(){
+        const param = {
+          groupId: this.joinForm.groupId,
+          userName: this.joinForm.userName
+        }
+        console.log('群组编号：'+ this.joinForm.groupId)
+        joinGroup(param).then(response => {
+          if (response.code === 0) {
+            this.$message({
+              message: '已经成功加入群组，请耐心等待管理员审核。。。',
+              type: 'success'
+            })
+            this.joinForm.groupId = '',
+            this.joinForm.userName = ''
+            
+          } else {
+            this.$message.error('加入群组失败！')
+          }
+        }).catch(error => {
+          this.$message.error('加入群组失败！'+ ': ' + error)
+        })
+        this.dialogJoinGroup = false
       },
       saveGroup(){
         const param = {
@@ -220,10 +238,17 @@ export default {
     mounted: function () {
       var _this = this
       selectgrouptList().then(function (res) {
-        console.log('返回的数据%o',res.data.data)
         _this.add_options = res.data.data
       }).catch(function (error) {
         console.log(error)
+      })
+      axios({
+        method: 'post',
+        url:'/org/joinGroupList',
+        data: ''
+      }).then((res)=>{
+        console.log("数值：%o",res.data.data)
+        this.joinData = res.data.data.data
       })
     }
   }
@@ -231,7 +256,8 @@ export default {
 
 <style scoped>
   .grouplist{
-    width:80%;
+    width:100%;
+    height:840px;
     padding:50px 50px 0px 50px;
   }
   .butList{
