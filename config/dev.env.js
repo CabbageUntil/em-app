@@ -1,5 +1,3 @@
-module.exports = {
-  NODE_ENV: '"development"',
-  ENV_CONFIG: '"dev"',
-  BASE_API: '"http://localhost:8092"'
-}
+export const NODE_ENV = '"development"';
+export const ENV_CONFIG = '"dev"';
+export const BASE_API = '"http://localhost:8092"';

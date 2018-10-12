@@ -7,27 +7,39 @@
         <table style="width: 100%">
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small" >{{ $t('form.personalInfo.field.name.label') }}</el-tag>
+              <el-tag
+              type="warning"
+              size="small" >
+              {{ $t('form.personalInfo.field.name.label') }}
+              </el-tag>
             </td>
             <td>{{ form.memberName }}</td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.sex.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.sex.label') }}</el-tag>
             </td>
             <td>{{ formatSex(form.sex) }}</td>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.marital.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.marital.label') }}</el-tag>
             </td>
             <td>{{ formatMaritalStatus(form.maritalStatus) }}</td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.education.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.education.label') }}</el-tag>
             </td>
             <td>{{ formatEducation(form.education) }}</td>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.symbolicAnimal.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.symbolicAnimal.label') }}</el-tag>
             </td>
             <td>
               <el-col>{{ formatSymbolicAnimal(form.sybolicAnimal) }}</el-col>
@@ -35,29 +47,39 @@
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.birthday.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.birthday.label') }}</el-tag>
             </td>
             <td>
               <el-col >{{ parseTime(form.birthday) }}</el-col>
             </td>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.IDCardExp.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.IDCardExp.label') }}</el-tag>
             </td>
             <td>{{ parseTime(form.idCardExp) }}</td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.emergencyContact.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.emergencyContact.label') }}</el-tag>
             </td>
             <td>{{ form.emergencyUser + ' ' + form.emergencyMobile }}</td>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.nativePlace.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.nativePlace.label') }}</el-tag>
             </td>
             <td>{{ form.nativePlace }}</td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.tel.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.tel.label') }}</el-tag>
             </td>
             <td>
               <el-row
@@ -73,7 +95,9 @@
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.email.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.email.label') }}</el-tag>
             </td>
             <td>
               <el-row
@@ -82,30 +106,40 @@
                 <el-row
                   v-for="item in emailList"
                   :key="item.id">
-                  {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+                    {{ item.content }}
+                  <el-tag
+                  type="success"
+                  size="mini">{{ item.label }}</el-tag>
                 </el-row>
               </el-row>
             </td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">{{ $t('form.personalInfo.field.address.label') }}</el-tag>
+              <el-tag
+                type="warning"
+                size="small">{{ $t('form.personalInfo.field.address.label') }}</el-tag>
             </td>
             <td>
               <el-row
                 v-if="addressList"
                 class="card-item">
-                <el-row
-                  v-for="item in addressList"
-                  :key="item.id">
-                  {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
-                </el-row>
+                  <el-row
+                    v-for="item in addressList"
+                    :key="item.id">
+                      {{ item.content }}
+                    <el-tag
+                    type="success"
+                    size="mini">{{ item.label }}</el-tag>
+                  </el-row>
               </el-row>
             </td>
           </tr>
           <tr>
             <td class="tile">
-              <el-tag type="warning" size="small">
+              <el-tag
+                type="warning"
+                size="small">
                 {{ $t('form.personalInfo.field.other.label') }}
               </el-tag>
             </td>
@@ -113,7 +147,12 @@
               <el-row
                 v-for="item in otherList"
                 :key="item.id">
-                {{ item.content }}<el-tag type="success" size="mini">{{ item.label }}</el-tag>
+                  {{ item.content }}
+                <el-tag
+                type="success"
+                size="mini">
+                {{ item.label }}
+                </el-tag>
               </el-row>
             </td>
           </tr>
@@ -124,7 +163,7 @@
 </template>
 
 <script>
-import { fetchMember , findMemberById } from '@/api/member'
+import { fetchMember, findMemberById } from '@/api/member'
 
 import { formatEducation, formatMaritalStatus, formatSex, formatSymbolicAnimal } from '@/utils/fieldFormatter'
 import { parseTime } from '@/utils/index'
@@ -151,18 +190,18 @@ export default {
       })
     },
     formatEducation (val) {
-      if(val != null) {
-        const value = parseInt(val);
+      if (val != null) {
+        const value = parseInt(val)
         return formatEducation(value)
       }
     },
-    parseTime(val){
+    parseTime (val) {
       return parseTime(val, '{y}年{m}月{d}日')
     },
     formatMaritalStatus (val) {
-      if(val){
+      if (val) {
         return formatMaritalStatus(1)
-      }else{
+      } else {
         return formatMaritalStatus(0)
       }
     },

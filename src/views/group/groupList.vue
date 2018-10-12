@@ -23,14 +23,14 @@
               <el-table-column
                 prop="name"
                 label="群组名称"
-                width="400">
+                width="200">
               </el-table-column>
               <el-table-column
                 prop="createDate"
                 label="创建日期"
-                width="400">
+                width="200">
               </el-table-column> 
-              <el-table-column label="操作">
+              <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -62,20 +62,20 @@
           </el-aside>
           <el-container>
             <el-table
-              :data="joinData"
+              :data="createData"
               style="width: 100%"
               max-height="580">
               <el-table-column
                 prop="name"
                 label="群组名称"
-                width="400">
+                width="200">
               </el-table-column>
               <el-table-column
                 prop="createDate"
                 label="创建日期"
-                width="400">
+                width="200">
               </el-table-column> 
-              <el-table-column label="操作">
+              <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -161,23 +161,7 @@ export default {
           userName: ''
         },
         joinData: [],
-        tableData: [{
-          date: '2016-05-02',
-          name: '佛山季华园技术中心',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '创业园',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '科技园',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '地铁分局',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
+        createData: [],
         formLabelWidth: '120px'
       }
     },
@@ -203,6 +187,14 @@ export default {
               message: '已经成功加入群组，请耐心等待管理员审核。。。',
               type: 'success'
             })
+            axios({
+              method: 'post',
+              url:'/org/joinGroupList',
+              data: ''
+            }).then((res)=>{
+              console.log("数值：%o",res.data.data)
+              this.joinData = res.data.data.data
+            })
             this.joinForm.groupId = '',
             this.joinForm.userName = ''
             
@@ -225,7 +217,14 @@ export default {
               message: '创建群组成功',
               type: 'success'
             })
-            
+            axios({
+              method: 'post',
+              url:'/org/createGroupList',
+              data: ''
+            }).then((res)=>{
+              console.log("数值：%o",res.data.data)
+              this.createData = res.data.data.data
+            })
           } else {
             this.$message.error('创建群组失败！')
           }
@@ -249,6 +248,14 @@ export default {
       }).then((res)=>{
         console.log("数值：%o",res.data.data)
         this.joinData = res.data.data.data
+      })
+      axios({
+        method: 'post',
+        url:'/org/createGroupList',
+        data: ''
+      }).then((res)=>{
+        console.log("数值：%o",res.data.data)
+        this.createData = res.data.data.data
       })
     }
   }
