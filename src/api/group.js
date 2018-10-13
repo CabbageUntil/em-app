@@ -20,3 +20,11 @@ export function selectgrouptList () {
     method: 'get'
   })
 }
+export function verifyGroupMember (query) {
+  return request({
+    url: '/org/verifyGroupMember/',
+    method: 'post',
+    params: query
+
+  })
+}

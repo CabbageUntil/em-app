@@ -99,6 +99,7 @@ export const asyncRouterMap = [
       }
     ]
   },
+  //审核
   {
     path: '/GroupMemberReview',
     component: Layout,
@@ -110,7 +111,7 @@ export const asyncRouterMap = [
     children: [
       {
       path: 'list',
-      component: () => import('@/views/group/index'),
+      component: () => import('@/views/group/GroupMemberReview'),
       name: 'MemberReview',
       meta: {
         title: 'MemberReview',
