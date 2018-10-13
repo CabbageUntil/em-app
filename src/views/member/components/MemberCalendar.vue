@@ -48,7 +48,7 @@ export default {
       pickerOptions: this.getPickerOptions(),
       eventSources: [],
       config: {
-        locale: this.$i18n.locale.indexOf('zh') >= 0 ? 'zh-cn' : 'en',
+        locale: this.$i18n.locale.indexOf('en') >= 0 ? 'zh-cn' : 'en',
         buttonIcons: false,
         weekNumbers: true,
         editable: false,
@@ -95,7 +95,6 @@ export default {
   },
   watch: {
     lang (newVal, oldVal) {
-      console.log(newVal)
       if (newVal.indexOf('zh') >= 0) {
         this.$refs.calendar.$emit('change-locale', 'zh-cn')
       } else {

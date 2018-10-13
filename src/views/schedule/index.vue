@@ -299,7 +299,6 @@ export default {
     selectRows () {
       let tableObj = this.$refs.apartmentListTable.$refs.vuetable
       let selectIds = this.$refs.apartmentListTable.$refs.vuetable.selectedTo
-      console.log(selectIds)
       if (selectIds.length > 0) {
         removeSchedules(selectIds).then(response => {
           const data = response.code

@@ -115,7 +115,6 @@ export default {
           ).then(() => {
             createCom(this.userForm, this.form).then(response => {
               const data = response
-              console.log('data:->' + data)
               if (data.code === 0) {
                 this.$message({
                   message: this.$t('form.createCompany.message.success'),

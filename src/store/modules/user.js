@@ -1,4 +1,4 @@
-import { login, logout, orgLogin, orgLogout, getUserInfo } from '@/api/login'
+import { login, logout, orgLogin, groupLogin, orgLogout, getUserInfo } from '@/api/login'
 
 const user = {
   state: {
@@ -62,7 +62,6 @@ const user = {
       return new Promise((resolve, reject) => {
         login(token.trim()).then(response => {
           const data = response
-          console.log(data)
           commit('SET_TOKEN', data.data.token)
           if (data.code !== 0) {
             reject(new Error())
@@ -86,7 +85,18 @@ const user = {
         })
       })
     },
-
+    // 登录分组
+    GroupLogin ({ commit }, loginInfo) {
+      const groupId = loginInfo.groupId
+      return new Promise((resolve, reject) => {
+        groupLogin(groupId).then(response => {
+          commit('SET_ROLES', [])
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     // 获取用户信息
     GetUserInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
@@ -168,7 +178,19 @@ const user = {
         commit('TOGGLE_LOGOUT_COM', isLogoutCom)
         resolve()
       })
-    }
+    },
+    toggleLogoutGroup({ commit }, isLogoutCom) {
+      return new Promise(resolve => {
+        commit('TOGGLE_LOGOUT_COM', isLogoutCom)
+        resolve()
+      })
+    },
+    toggleLoginGroup({ commit }, isLoginCom) {
+      return new Promise(resolve => {
+        commit('TOGGLE_LOGIN_COM', isLoginCom)
+        resolve()
+      })
+    },
   }
 
 }

@@ -53,6 +53,26 @@ export const constantRouterMap = [
         noCache: false
       },
       hidden: true
+    },
+    {
+      path: 'dashboard_groupLeader',
+      component: () => import('@/views/dashboard/groupLeader/index'),
+      name: 'DashboardLeader',
+      meta: {
+        title: 'DashboardLeader',
+        noCache: false
+      },
+      hidden: true
+    },
+    {
+      path: 'dashboard_groupMember',
+      component: () => import('@/views/dashboard/groupMember/index'),
+      name: 'DashboardGroupMember',
+      meta: {
+        title: 'DashboardGroupMember',
+        noCache: false
+      },
+      hidden: true
     }]
   }
 ]
@@ -64,20 +84,77 @@ export const asyncRouterMap = [
       component: Layout,
       meta: {
         roles: ['visitor'],
-        title: '群组管理',
+        title: 'GroupInfo',
         icon: 'example'
       },
       children: [
         {
         path: 'list',
-        component: () => import('@/views/group/groupList'),
-        name: '群组信息',
+        component: () => import('@/views/group/index'),
+        name: 'GroupInfo',
         meta: {
-          title: '群组信息',
+          title: 'GroupInfo',
           icon: 'list'
         }
       }
     ]
+  },
+  {
+    path: '/GroupMemberReview',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader'],
+      title: 'MemberReview',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/index'),
+      name: 'MemberReview',
+      meta: {
+        title: 'MemberReview',
+        icon: 'list'
+      }
+    }]
+  },
+  {
+    path: '/serverList',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader','groupMember'],
+      title: 'serverList',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/serverList'),
+      name: 'serverList',
+      meta: {
+        title: 'serverList',
+        icon: 'list'
+      }
+    }]
+  },
+  {
+    path: '/groupMemberList',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader'],
+      title: 'groupMemberList',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/groupMemberList'),
+      name: 'groupMemberList',
+      meta: {
+        title: 'groupMemberList',
+        icon: 'list'
+      }
+    }]
   },
 
   // 加入公司

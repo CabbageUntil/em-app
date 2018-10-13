@@ -514,7 +514,6 @@ export default {
     } else if (path.indexOf('/member/edit') >= 0) {
       findMemberById(id).then(response => {
         this.mode = 'edit'
-        //console.log('用户详细信息：%o',response.data)
         this.fillData(response.data)
       })
     } else {

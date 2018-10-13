@@ -15,7 +15,10 @@ export default {
     memberCalendar: 'Member Calendar',
     apartmentList: 'Apartment List',
     ScheduleList: 'ScheduleList',
-    GrouptList: '群组管理'
+    GroupInfo: 'GroupManager',
+    MemberReview: 'MemberReview',
+    serverList: 'serverList',
+    groupMemberList: 'groupMemberList',
   },
   navbar: {
     logOut: 'Log Out',
@@ -478,10 +481,13 @@ export default {
       role: {
         creator: 'creator',
         admin: 'admin',
-        member: 'member'
+        member: 'member',
+        groupMember: 'groupMember',
+        groupLeader: 'groupLeader'
       },
       btn: {
-        exit: 'logout company'
+        exit: 'logout company',
+        exit1: 'Logout Group'
       }
     }
   },

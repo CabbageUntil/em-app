@@ -4,6 +4,8 @@ export default {
     DashboardVisitor: '游客面板',
     DashboardCreator: '创建者面板',
     DashboardMember: '成员面板',
+    DashboardGroupMember: '群组成员面板',
+    DashboardLeader: '群管理员面板',
     joinCom: '加入公司',
     createCom: '创建公司',
     joinComForm: '加入公司表单',
@@ -15,7 +17,10 @@ export default {
     memberCalendar: '成员日程',
     apartmentList: '部门管理',
     ScheduleList: '日程管理',
-    GrouptList: '群组管理'
+    GroupInfo: '群组管理',
+    MemberReview: '群成员审核',
+    serverList: '查看服务器',
+    groupMemberList: '群组成员管理'
   },
   navbar: {
     logOut: '退出登录',
@@ -486,10 +491,13 @@ export default {
       role: {
         creator: '创建人',
         admin: '管理员',
-        member: '成员'
+        member: '成员',
+        groupMember: '群组成员',
+        groupLeader: '群组管理员'
       },
       btn: {
-        exit: '登出公司'
+        exit: '登出公司',
+        exit1: '登出群组'
       }
     }
   },

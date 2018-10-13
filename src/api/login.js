@@ -29,6 +29,17 @@ export function orgLogin (orgId) {
   })
 }
 
+export function groupLogin (groupId) {
+  const data = {
+    groupId
+  }
+  return request({
+    url: '/org/loginGroup',
+    method: 'post',
+    data
+  })
+}
+
 export function orgLogout () {
   return request({
     url: '/org/logoutCom',
