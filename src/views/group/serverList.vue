@@ -45,7 +45,6 @@ import axios from 'axios'
     data() {
       return {
         hostData: []
-        
       }
     },
     methods:{
@@ -63,8 +62,7 @@ import axios from 'axios'
     },
     mounted: function (){
         const params = {
-            token: this.$store.state.user.token,
-            app_name: 'aanets'
+            token: this.$store.state.user.token
         }
         axios({
             method: 'post',

@@ -79,15 +79,15 @@ export const constantRouterMap = [
 
 export const asyncRouterMap = [
   //分组
-   {
-      path: '/gropList',
-      component: Layout,
-      meta: {
-        roles: ['visitor'],
-        title: 'GroupInfo',
-        icon: 'example'
-      },
-      children: [
+  {
+    path: '/gropList',
+    component: Layout,
+    meta: {
+      roles: ['visitor'],
+      title: 'GroupInfo',
+      icon: 'example'
+    },
+    children: [
         {
         path: 'list',
         component: () => import('@/views/group/index'),
@@ -134,6 +134,25 @@ export const asyncRouterMap = [
       name: 'serverList',
       meta: {
         title: 'serverList',
+        icon: 'list'
+      }
+    }]
+  },
+  {
+    path: '/ownServerList',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader','groupMember'],
+      title: 'ownServerList',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/ownServerList'),
+      name: 'ownServerList',
+      meta: {
+        title: 'ownServerList',
         icon: 'list'
       }
     }]

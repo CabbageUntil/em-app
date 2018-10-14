@@ -55,7 +55,6 @@ import axios from 'axios'
                 url:'/org/selectNotViewGroupList',
                 data: ''
             }).then((res)=>{
-                console.log('审核成员的信息%o',res.data.data.data)
                 this.hostData = res.data.data.data
             })
           } else {
@@ -78,16 +77,11 @@ import axios from 'axios'
       }      
     },
     mounted: function (){
-        const params = {
-            token: this.$store.state.user.token,
-            app_name: 'aanets'
-        }
         axios({
             method: 'post',
             url:'/org/selectNotViewGroupList',
             data: ''
         }).then((res)=>{
-            console.log('审核成员的信息%o',res.data.data.data)
             this.hostData = res.data.data.data
         })
     }

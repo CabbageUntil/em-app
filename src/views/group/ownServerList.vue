@@ -10,14 +10,29 @@
 
             <el-table-column
             prop="sid"
-            label="姓名">
+            label="服务器编号">
             </el-table-column>
 
             <el-table-column
             prop="system_name"
-            label="联系方式">
+            label="系统名称">
             </el-table-column>
-        
+
+            <el-table-column
+            prop="ips"
+            label="IP地址">
+            </el-table-column>
+            
+            <el-table-column
+            prop="expire_time"
+            :formatter="dateFormat" 
+            label="到期时间">
+            </el-table-column>
+
+            <el-table-column
+            prop="users.username"
+            label="备注">
+            </el-table-column>
         </el-table>
        </el-main>
     </el-container>
@@ -48,8 +63,8 @@ import axios from 'axios'
     },
     mounted: function (){
         const params = {
-            token: this.$store.state.user.token,
-            app_name: 'aanets'
+          token: this.$store.state.user.token,
+          app_name: 'aanets'
         }
         axios({
             method: 'post',
@@ -57,13 +72,6 @@ import axios from 'axios'
             data:params
         }).then((res)=>{
             this.hostData = res.data.result
-        })
-        axios({
-            method: 'post',
-            url:'/org/selectNotViewGroupList',
-            data: ''
-        }).then((res)=>{
-            this.createData = res.data.data.data
         })
     }
   }

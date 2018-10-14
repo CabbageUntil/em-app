@@ -20,7 +20,8 @@ export default {
     GroupInfo: '群组管理',
     MemberReview: '群成员审核',
     serverList: '查看服务器',
-    groupMemberList: '群组成员管理'
+    groupMemberList: '群组成员管理',
+    ownServerList: '购买的服务器'
   },
   navbar: {
     logOut: '退出登录',
