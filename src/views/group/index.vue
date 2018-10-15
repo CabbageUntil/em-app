@@ -230,8 +230,14 @@ export default {
               url:'/org/createGroupList',
               data: ''
             }).then((res)=>{
-              console.log("数值：%o",res.data.data)
               this.createData = res.data.data.data
+            })
+            axios({
+              method: 'post',
+              url:'/org/joinGroupList',
+              data: ''
+            }).then((res)=>{
+              this.joinData = res.data.data.data
             })
           } else {
             this.$message.error('创建群组失败！')
@@ -254,7 +260,6 @@ export default {
         url:'/org/joinGroupList',
         data: ''
       }).then((res)=>{
-        console.log("数值：%o",res.data.data)
         this.joinData = res.data.data.data
       })
       axios({
@@ -262,7 +267,6 @@ export default {
         url:'/org/createGroupList',
         data: ''
       }).then((res)=>{
-        console.log("数值：%o",res.data.data)
         this.createData = res.data.data.data
       })
     }

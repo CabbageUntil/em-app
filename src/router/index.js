@@ -294,7 +294,7 @@ export const asyncRouterMap = [
     meta: {
       title: 'Apartment',
       icon: 'lock',
-      roles: ['creator', 'admin', 'member']
+      roles: ['creator', 'admin']
     },
     children: [{
       path: 'index',

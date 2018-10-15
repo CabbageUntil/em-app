@@ -28,11 +28,6 @@
             :formatter="dateFormat" 
             label="到期时间">
             </el-table-column>
-
-            <el-table-column
-            prop="users.username"
-            label="备注">
-            </el-table-column>
         </el-table>
        </el-main>
     </el-container>

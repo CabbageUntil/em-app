@@ -99,7 +99,6 @@
             effect="dark"
             :content="$t('table.buttonHint.memberList.server_view')"
             placement="top"
-            v-show="isRemoveUserBtnShow(props.rowData.member_status)"
           >
             <el-button
               type="primary" icon="el-icon-view" size="mini"
@@ -113,7 +112,6 @@
             effect="dark"
             :content="$t('table.buttonHint.memberList.assign_server')"
             placement="top"
-            v-show="isRemoveUserBtnShow(props.rowData.member_status)"
           >
             <el-button
               type="primary" icon="el-icon-upload" size="mini"
@@ -507,8 +505,7 @@ export default {
         this.form.alias = rowData.name
         this.form.mobile = rowData.onenetOwner
         const params = {
-          token: this.$store.state.user.token,
-          app_name: 'aanets'
+          token: this.$store.state.user.token
         }
         axios({
           method: 'post',

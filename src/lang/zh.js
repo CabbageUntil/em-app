@@ -19,7 +19,7 @@ export default {
     ScheduleList: '日程管理',
     GroupInfo: '群组管理',
     MemberReview: '群成员审核',
-    serverList: '查看服务器',
+    serverList: '被分配的服务器',
     groupMemberList: '群组成员管理',
     ownServerList: '购买的服务器'
   },

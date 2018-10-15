@@ -62,7 +62,6 @@ const user = {
       return new Promise((resolve, reject) => {
         login(token.trim()).then(response => {
           const data = response
-          commit('SET_TOKEN', data.data.token)
           if (data.code !== 0) {
             reject(new Error())
           } else {
@@ -111,6 +110,7 @@ const user = {
             if (data.role !== 'visitor') {
               commit('SET_ORG_ID', data.orgId)
               commit('SET_ORG_NAME', data.orgName)
+              commit('SET_TOKEN', data.token)
               commit('SET_MEMBER_ID', data.memberId)
               commit('SET_MEMBER_NAME', data.memberName)
               commit('SET_ROLES', [data.role])
