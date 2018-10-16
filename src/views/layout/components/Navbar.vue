@@ -8,9 +8,10 @@
       :is-active="sidebar.opened"/>
 
     <breadcrumb class="breadcrumb-container"/>
-
     <div class="right-menu">
-
+      <el-tag
+       class="userName right-menu-item"
+       placement="bottom">欢迎！{{$store.getters.name+','+this.$store.getters.roles[0]}}</el-tag>
       <el-tooltip
         effect="dark"
         :content="$t('navbar.screenfull')"
@@ -136,6 +137,10 @@ export default {
     }
     .international{
       vertical-align: top;
+    }
+    .userName{
+      position: relative;
+      bottom: 15px;
     }
     .theme-switch {
       vertical-align: 15px;

@@ -28,6 +28,10 @@ const getters = {
   joinComName: state => state.form.companyName,
   // 登录、登出公司标记，用于判断是否要关闭相应的标签栏导航
   isLoginCom: state => state.user.loginCom,
-  isLogoutCom: state => state.user.logoutCom
+  isLogoutCom: state => state.user.logoutCom,
+  // 登录分组和登出分组标记，用于判断是否要关闭相应的标签栏导航
+  isLoginGroup: state => state.user.loginGroup,
+  isLogoutGroup: state => state.user.logoutGroup
+
 }
 export default getters

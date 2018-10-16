@@ -157,6 +157,8 @@
                 </el-table-column>
               </el-table>
             </el-dialog>
+
+
             <el-form :model="form">
               <el-form-item label="姓名" :label-width="formLabelWidth">
                 <el-input
@@ -315,7 +317,6 @@
     </el-row>
   </div>
 </template>
-
 <script>
 import Vue from 'vue'
 import axios from 'axios'
@@ -505,7 +506,8 @@ export default {
         this.form.alias = rowData.name
         this.form.mobile = rowData.onenetOwner
         const params = {
-          token: this.$store.state.user.token
+          token: this.$store.state.user.token,
+          app_name: 'aanets'
         }
         axios({
           method: 'post',

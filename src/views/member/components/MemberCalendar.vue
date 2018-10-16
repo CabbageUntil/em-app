@@ -156,7 +156,6 @@ export default {
       fetchCalendar(memberId,this.datetimeRange[0], this.datetimeRange[1]).then(response => {
         const data = response.data.data
         this.eventSources = data
-        console.log("%o",data)
         // 根据查询日期范围设置视图的显示日期范围
         this.$refs.calendar.fireMethod('option', 'visibleRange', {
           start: parseTime(this.datetimeRange[0], '{y}-{m}-{d}T{h}:{i}:{s}'),

@@ -171,7 +171,7 @@ export default {
         Promise.all([
           this.$store.dispatch('GroupLogin', { groupId })
         ]).then((result) => {
-          this.$store.dispatch('toggleLogoutGroup', true)
+          this.$store.dispatch('toggleLoginGroup', true)
           this.$router.push({ path: '/' })
         }).catch((error) => {
           console.log('登录群组失败: %o', error)
@@ -188,7 +188,6 @@ export default {
           groupId: this.joinForm.groupId,
           userName: this.joinForm.userName
         }
-        console.log('群组编号：'+ this.joinForm.groupId)
         joinGroup(param).then(response => {
           if (response.code === 0) {
             this.$message({
@@ -200,7 +199,6 @@ export default {
               url:'/org/joinGroupList',
               data: ''
             }).then((res)=>{
-              console.log("数值：%o",res.data.data)
               this.joinData = res.data.data.data
             })
             this.joinForm.groupId = '',

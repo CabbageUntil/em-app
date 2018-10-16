@@ -42,7 +42,6 @@ import axios from 'axios'
     },
     methods:{
       verify(index,row){
-        console.log(row.groupMemberId);
         const param = {groupMemberId: row.groupMemberId}
         verifyGroupMember(param).then(response => {
           if (response.code === 0) {

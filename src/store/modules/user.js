@@ -19,7 +19,9 @@ const user = {
     //用户token
     token: '',
     loginCom: false,
-    logoutCom: false
+    logoutCom: false,
+    loginGroup: false,
+    logoutGroup: false
   },
 
   mutations: {
@@ -53,6 +55,12 @@ const user = {
     },
     TOGGLE_LOGOUT_COM: (state, isLogoutCom) => {
       state.logoutCom = !state.logoutCom
+    },
+    TOGGLE_LOGIN_GROUP: (state, isLoginGroup) => {
+      state.loginGroup = !state.loginGroup
+    },
+    TOGGLE_LOGOUT_GROUP: (state, isLogoutGroup) => {
+      state.logoutCom = !state.logoutGroup
     }
   },
 
@@ -84,7 +92,7 @@ const user = {
         })
       })
     },
-    // 登录分组
+    //分组模块登录
     GroupLogin ({ commit }, loginInfo) {
       const groupId = loginInfo.groupId
       return new Promise((resolve, reject) => {
@@ -108,6 +116,7 @@ const user = {
             // 若已登录公司，则使用公司身份，否则使用游客身份
             // 分配登录公司信息
             if (data.role !== 'visitor') {
+              commit('SET_NAME', data.name)
               commit('SET_ORG_ID', data.orgId)
               commit('SET_ORG_NAME', data.orgName)
               commit('SET_TOKEN', data.token)
@@ -159,6 +168,25 @@ const user = {
         })
       })
     },
+    // 分组登出
+    GroupLogout ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        orgLogout().then((response) => {
+          if (response.code !== 0) {
+            reject(new Error())
+          } else {
+            commit('SET_ORG_ID', null)
+            commit('SET_ORG_NAME', null)
+            commit('SET_MEMBER_ID', null)
+            commit('SET_MEMBER_NAME', null)
+            commit('SET_ROLES', [])
+            resolve()
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
 
     // 前端 登出
     FedLogout ({ commit }) {
@@ -179,15 +207,16 @@ const user = {
         resolve()
       })
     },
-    toggleLogoutGroup({ commit }, isLogoutCom) {
+
+    toggleLogoutGroup({ commit }, isLogoutGroup) {
       return new Promise(resolve => {
-        commit('TOGGLE_LOGOUT_COM', isLogoutCom)
+        commit('TOGGLE_LOGOUT_GROUP', isLogoutGroup)
         resolve()
       })
     },
-    toggleLoginGroup({ commit }, isLoginCom) {
+    toggleLoginGroup({ commit }, isLoginGroup) {
       return new Promise(resolve => {
-        commit('TOGGLE_LOGIN_COM', isLoginCom)
+        commit('TOGGLE_LOGIN_GROUP', isLoginGroup)
         resolve()
       })
     },

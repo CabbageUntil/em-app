@@ -25,28 +25,28 @@ export default {
     handleLogoutGroupClick () {
       // 登出群组
       Promise.all([
-        this.$store.dispatch('OrgLogout'),
+        this.$store.dispatch('GroupLogout'),
         this.$store.dispatch('toggleLogoutGroup', true)
       ]).then((result) => {
-        this.$router.push({ path: '/?' + +new Date() })
+        this.$router.push({ path: '/' })
       }).catch((error) => {
         console.log('登出群组失败：%o', error)
       })
     },
-    handleLoginCom () {
-      if (this.$store.getters.isLoginCom) {
+    handleLoginGroup () {
+      if (this.$store.getters.isLoginGroup) {
         this.$store.dispatch('delOthersViews', { path: this.$route.path })
-        this.$store.dispatch('toggleLoginCom', false)
+        this.$store.dispatch('toggleLoginGroup', false)
       } else {
         this.$store.dispatch('delVisitedViews', { path: '/dashboard' })
       }
     }
   },
   activated () {
-    this.handleLoginCom()
+    this.handleLoginGroup()
   },
   mounted () {
-    this.handleLoginCom()
+    this.handleLoginGroup()
   }
 }
 </script>

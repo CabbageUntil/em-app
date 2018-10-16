@@ -75,7 +75,6 @@ export default {
   /* eslint-enable */
   dissolveCom: config => {
     const { orgId } = JSON.parse(config.body)
-    console.log(orgId)
     List.splice(List.findIndex(item => item.id === orgId), 1)
 
     return {

@@ -56,7 +56,7 @@ export const constantRouterMap = [
     },
     {
       path: 'dashboard_groupLeader',
-      component: () => import('@/views/dashboard/groupLeader/index'),
+      component: () => import('@/views/group/groupMemberList'),
       name: 'DashboardLeader',
       meta: {
         title: 'DashboardLeader',
@@ -66,7 +66,7 @@ export const constantRouterMap = [
     },
     {
       path: 'dashboard_groupMember',
-      component: () => import('@/views/dashboard/groupMember/index'),
+      component: () => import('@/views/group/groupMemberList'),
       name: 'DashboardGroupMember',
       meta: {
         title: 'DashboardGroupMember',
@@ -84,8 +84,8 @@ export const asyncRouterMap = [
     component: Layout,
     meta: {
       roles: ['visitor'],
-      title: 'GroupInfo',
-      icon: 'example'
+      // title: 'GroupInfo',
+      // icon: 'example'
     },
     children: [
         {
@@ -161,7 +161,7 @@ export const asyncRouterMap = [
     path: '/groupMemberList',
     component: Layout,
     meta: {
-      roles: ['groupLeader'],
+      roles: ['groupLeader','groupMember'],
       title: 'groupMemberList',
       icon: 'example'
     },
