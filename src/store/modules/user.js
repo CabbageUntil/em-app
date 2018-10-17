@@ -21,7 +21,9 @@ const user = {
     loginCom: false,
     logoutCom: false,
     loginGroup: false,
-    logoutGroup: false
+    logoutGroup: false,
+    //登录人身份
+    loginRole: ''
   },
 
   mutations: {
@@ -61,7 +63,10 @@ const user = {
     },
     TOGGLE_LOGOUT_GROUP: (state, isLogoutGroup) => {
       state.logoutCom = !state.logoutGroup
-    }
+    },
+    SET_LOGINROLE: (state, loginRole) => {
+      state.loginRole = loginRole
+    },
   },
 
   actions: {
@@ -112,10 +117,21 @@ const user = {
             reject(new Error())
           } else {
             const data = response.data
-            //console.log(" 登录信息 ---》》%o", data)
+           // console.log(" 登录信息 ---》》%o", data)
             // 若已登录公司，则使用公司身份，否则使用游客身份
             // 分配登录公司信息
             if (data.role !== 'visitor') {
+              if(data.role ==='admin') {
+                commit('SET_LOGINROLE', "公司创建人")
+              } else if(data.role === 'groupLeader') {
+                commit('SET_LOGINROLE', "群组组长")
+              } else if(data.role === 'groupMember') {
+                commit('SET_LOGINROLE', "群组成员")
+              } else if(data.role === 'member') {
+                commit('SET_LOGINROLE', "公司员工")
+              } else if(data.role === 'creator') {
+                commit('SET_LOGINROLE', "公司创建人")
+              }
               commit('SET_NAME', data.name)
               commit('SET_ORG_ID', data.orgId)
               commit('SET_ORG_NAME', data.orgName)
@@ -124,7 +140,8 @@ const user = {
               commit('SET_MEMBER_NAME', data.memberName)
               commit('SET_ROLES', [data.role])
             // 分配登录信息
-            } else {
+          } else {
+              commit('SET_LOGINROLE', "游客")
               commit('SET_ROLES', [data.role])
               commit('SET_NAME', data.name)
               commit('SET_AVATAR', data.avatar)

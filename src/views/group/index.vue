@@ -7,7 +7,7 @@
             <el-row>
               <el-button icon = "el-icon-location" type="primary butList" >
               <p style="font-size:15px;padding-top:30px;">加入群组数：<span style="
-              font-size: 18px;color: #EEEEEE;">12</span></p>
+              font-size: 18px;color: #EEEEEE;">{{joinGroupCount}}</span></p>
               </el-button>
             </el-row>
             <el-row>
@@ -15,22 +15,28 @@
               <el-button type="success" @click="dialogJoinGroup = true">加入群组</el-button>
             </el-row>
           </el-aside>
-          <el-container>
+          <el-main>
             <el-table
-              :data="joinData"
-              style="width: 100%"
-              max-height="580">
-              <el-table-column
-                prop="name"
-                label="群组名称"
-                width="200">
+            border
+            style="width:60%"
+            :data="joinData"
+            max-height="580">
+            <el-table-column
+              prop="name"
+              align="center" 
+              label="群组名称"
+              width="200">
               </el-table-column>
               <el-table-column
                 prop="createDate"
+                align="center" 
+                :formatter="dateFormat" 
                 label="创建日期"
                 width="200">
               </el-table-column> 
-              <el-table-column label="操作" width="200">
+              <el-table-column 
+               align="center" 
+               label="操作" >
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -52,7 +58,7 @@
             <el-row>
               <el-button icon = "el-icon-location" type="primary butList" >
               <p style="font-size:15px;padding-top:30px;">拥有群组数：<span style="
-              font-size: 18px;color: #EEEEEE;">12</span></p>
+              font-size: 18px;color: #EEEEEE;">{{createGroupCount}}</span></p>
               </el-button>
             </el-row>
             <el-row>
@@ -60,22 +66,28 @@
               <el-button type="success" @click="dialogJoinGroup = true">加入群组</el-button>
             </el-row>
           </el-aside>
-          <el-container>
+          <el-main>
             <el-table
+              border
               :data="createData"
-              style="width: 100%"
+              style="width:60%"
               max-height="580">
               <el-table-column
                 prop="name"
+                align="center" 
                 label="群组名称"
                 width="200">
               </el-table-column>
               <el-table-column
+                align="center" 
                 prop="createDate"
+                :formatter="dateFormat" 
                 label="创建日期"
                 width="200">
               </el-table-column> 
-              <el-table-column label="操作" width="200">
+              <el-table-column 
+               align="center" 
+               label="操作" >
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -87,7 +99,7 @@
                 </template>
               </el-table-column>
             </el-table>
-          </el-container>
+          </el-main>
         </el-container>
       </el-tab-pane>
     </el-tabs>
@@ -100,12 +112,9 @@
         <el-form-item label="群组名称" prop="name">
           <el-input v-model="createForm.groupName"></el-input>
         </el-form-item>
-        <el-form-item label="姓名" prop="userName">
-          <el-input v-model="createForm.userName"></el-input>
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogCreateGroup = false">取 消</el-button>
         <el-button type="primary" @click="saveGroup">确 定</el-button>
       </span>
     </el-dialog>
@@ -129,12 +138,9 @@
               :value="item.groupId">
             </el-option>
           </el-select>
-          <el-form-item label="审批人">
-            <el-input v-model="joinForm.userName" placeholder="姓名"></el-input>
-          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogJoinGroup = false">取 消</el-button>
         <el-button type="primary" @click="joinGroup">确 定</el-button>
       </span>
     </el-dialog>
@@ -147,18 +153,19 @@ name: 'GroupList'
 export default {
     data() {
       return {
+        //创建和加入的群组的数量
+        joinGroupCount: '',
+        createGroupCount: '',
         active: 0,
         dialogCreateGroup: false,
         dialogJoinGroup: false,
         add_option: [],
         createForm: {
-          groupName: '',
-          userName: ''
+          groupName: ''
         },
         ruleForm: {},
         joinForm: {
-          groupId: '',
-          userName: ''
+          groupId: ''
         },
         joinData: [],
         createData: [],
@@ -166,6 +173,18 @@ export default {
       }
     },
     methods: {
+      //日期格式化
+      dateFormat(row, column, cellValue, index){
+        var dateMat = new Date(cellValue)
+        const year = dateMat.getFullYear();
+        const month = dateMat.getMonth() + 1;
+        const day = dateMat.getDate();
+        const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
+        const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
+        const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
+        const timeFormat= year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+        return timeFormat;
+      },
       enterGroup(index, row) {
         const groupId = row.groupId
         Promise.all([
@@ -185,8 +204,7 @@ export default {
       },
       joinGroup(){
         const param = {
-          groupId: this.joinForm.groupId,
-          userName: this.joinForm.userName
+          groupId: this.joinForm.groupId
         }
         joinGroup(param).then(response => {
           if (response.code === 0) {
@@ -194,12 +212,29 @@ export default {
               message: '已经成功加入群组，请耐心等待管理员审核。。。',
               type: 'success'
             })
+            //查询创建的群组数
             axios({
               method: 'post',
               url:'/org/joinGroupList',
               data: ''
             }).then((res)=>{
               this.joinData = res.data.data.data
+            })
+            //查询加入群组的数量
+            axios({
+              method: 'post',
+              url:'/org/getJionGroupCount',
+              data: ''
+            }).then((res)=>{
+              this.joinGroupCount = res.data.data.count
+            })
+            //查询创建群组的数量
+            axios({
+              method: 'post',
+              url:'/org/getCreateGroupCount',
+              data: ''
+            }).then((res)=>{
+              this.createGroupCount = res.data.data.count
             })
             this.joinForm.groupId = '',
             this.joinForm.userName = ''
@@ -214,8 +249,7 @@ export default {
       },
       saveGroup(){
         const param = {
-          groupName: this.createForm.groupName,
-          userName: this.createForm.userName
+          groupName: this.createForm.groupName
         }
         createGroup(param).then(response => {
           if (response.code === 0) {
@@ -223,6 +257,7 @@ export default {
               message: '创建群组成功',
               type: 'success'
             })
+            //查询创建的群组
             axios({
               method: 'post',
               url:'/org/createGroupList',
@@ -230,12 +265,29 @@ export default {
             }).then((res)=>{
               this.createData = res.data.data.data
             })
+            //查询加入的群组
             axios({
               method: 'post',
               url:'/org/joinGroupList',
               data: ''
             }).then((res)=>{
               this.joinData = res.data.data.data
+            })
+            //查询加入群组的数量
+            axios({
+              method: 'post',
+              url:'/org/getJionGroupCount',
+              data: ''
+            }).then((res)=>{
+              this.joinGroupCount = res.data.data.count
+            })
+            //查询创建群组的数量
+            axios({
+              method: 'post',
+              url:'/org/getCreateGroupCount',
+              data: ''
+            }).then((res)=>{
+              this.createGroupCount = res.data.data.count
             })
           } else {
             this.$message.error('创建群组失败！')
@@ -253,6 +305,7 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
+      //查看加入的群组的信息
       axios({
         method: 'post',
         url:'/org/joinGroupList',
@@ -260,12 +313,29 @@ export default {
       }).then((res)=>{
         this.joinData = res.data.data.data
       })
+      //查看创建的群组的信息
       axios({
         method: 'post',
         url:'/org/createGroupList',
         data: ''
       }).then((res)=>{
         this.createData = res.data.data.data
+      })
+      //查询加入群组的数量
+      axios({
+        method: 'post',
+        url:'/org/getJionGroupCount',
+        data: ''
+      }).then((res)=>{
+        this.joinGroupCount = res.data.data.count
+      })
+      //查询创建群组的数量
+      axios({
+        method: 'post',
+        url:'/org/getCreateGroupCount',
+        data: ''
+      }).then((res)=>{
+        this.createGroupCount = res.data.data.count
       })
     }
   }

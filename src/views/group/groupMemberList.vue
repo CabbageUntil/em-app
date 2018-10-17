@@ -20,12 +20,12 @@
             <el-button
             v-show="showBtn()"
             type="primary"
-            icon="el-icon-edit">添加成员</el-button>
+            icon="el-icon-edit" @click="outerVisible = true">添加成员</el-button>
           </el-col>
           <el-col :span="4" :offset="12">
           <el-button
             type="danger"
-            plain
+            size = "mini"
             @click="handleLogoutGroupClick">
             {{ $t('dashboard.welcomeText.btn.exit1') }}
           </el-button>
@@ -69,11 +69,9 @@
                   icon="el-icon-delete"
                   @click="searchServer(scope.$index, scope.row)"
                   >移除服务器</el-button>
-
               </template>
             </el-table-column>
         </el-table>
-
 
          <!-- 分配虚拟主机 -->
           <el-dialog title="分配服务器" :visible.sync="outerVisibles">
@@ -262,6 +260,34 @@
             </el-table>  
           </el-dialog>
 
+          <!--添加成员-->
+           <el-dialog title="添加群组成员" :visible.sync="outerVisible">
+              <el-dialog
+              width="30%"
+              title="内层 Dialog"
+              :visible.sync="innerVisible"
+              append-to-body>
+              </el-dialog>
+              <el-container>
+                <el-main width = "200">
+                  <el-form ref="addform" :model="addform" label-width="80px">
+                      <el-form-item label="姓名">
+                        <el-input v-model="addform.name"></el-input>
+                      </el-form-item>
+                      <el-form-item label="联系电话">
+                        <el-input v-model="addform.mebile"></el-input>
+                      </el-form-item>
+                    </el-form>
+                </el-main>
+              </el-container>
+            <div slot="footer" class="dialog-footer">
+
+
+              <el-button @click="outerVisible = false">取 消</el-button>
+              <el-button type="primary" @click="innerVisible = true">确定</el-button>
+            </div>
+          </el-dialog> 
+
         <div align="center" style="padding: 20px 19px;">
           <el-pagination
               background
@@ -286,6 +312,11 @@ import axios from 'axios'
   export default {
     data() {
       return {
+        outerVisible: false,
+        innerVisible: false,
+        addform: {
+          name: ''
+        },
         groupMemberData: [],
         //表格当前页数据
         tableData: [],
@@ -553,9 +584,9 @@ import axios from 'axios'
         const year = dateMat.getFullYear();
         const month = dateMat.getMonth() + 1;
         const day = dateMat.getDate();
-        const hh = dateMat.getHours();
-        const mm = dateMat.getMinutes();
-        const ss = dateMat.getSeconds();
+        const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
+        const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
+        const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
         const timeFormat= year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
         return timeFormat;
       },

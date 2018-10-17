@@ -157,26 +157,6 @@ export const asyncRouterMap = [
       }
     }]
   },
-  {
-    path: '/groupMemberList',
-    component: Layout,
-    meta: {
-      roles: ['groupLeader','groupMember'],
-      title: 'groupMemberList',
-      icon: 'example'
-    },
-    children: [
-      {
-      path: 'list',
-      component: () => import('@/views/group/groupMemberList'),
-      name: 'groupMemberList',
-      meta: {
-        title: 'groupMemberList',
-        icon: 'list'
-      }
-    }]
-  },
-
   // 加入公司
   {
     path: '/joinCom',

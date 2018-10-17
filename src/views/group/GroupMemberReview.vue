@@ -68,9 +68,9 @@ import axios from 'axios'
         const year = dateMat.getFullYear();
         const month = dateMat.getMonth() + 1;
         const day = dateMat.getDate();
-        const hh = dateMat.getHours();
-        const mm = dateMat.getMinutes();
-        const ss = dateMat.getSeconds();
+        const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
+        const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
+        const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
         const timeFormat= year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
         return timeFormat;
       }      
