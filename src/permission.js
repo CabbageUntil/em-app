@@ -30,8 +30,9 @@ router.beforeEach((to, from, next) => {
         })
       }).catch((err) => {
         store.dispatch('FedLogout').then(() => {
-          Message.error(err || 'Verification failed, please login again')
-          next({ path: '/login' })
+         // Message.error(err || 'Verification failed, please login again')
+          //session 消失后刷新页面会条状到登录页面
+          window.location.href = 'https://passport.dianchat.net/pass/logout?callback=https://passport.dianchat.net/pass/service_login?callback=http://localhost:8092/login'
         })
       })
     } else {

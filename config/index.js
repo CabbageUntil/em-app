@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/org': {
-          target: 'http://localhost:8088/',
+          target: 'http://localhost:8288/',
           changeOrigin: true
       },
       '/rdp': {

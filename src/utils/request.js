@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Qs from 'qs'
+
 import { Message, MessageBox } from 'element-ui'
 import store from '@/store'
 
@@ -32,15 +33,23 @@ service.interceptors.response.use(
     if (res.code !== 0) {
       // -1000: 登录失败 -1001: 需要登录
       if (res.code === -1000 || res.code === -1001) {
-        // 请自行在引入 MessageBox
-        MessageBox.alert('need login', 'confirm', {
-          confirmButtonText: 'confirm',
-          callback: action => {
-            store.dispatch('FedLogOut').then(() => {
-              location.reload() // 为了重新实例化vue-router对象 避免bug
-            })
-          }
+         Message({
+          message: '您的登录信息已过期，请重新登录，系统3秒后自动跳转登录页面。。。',
+          type: 'error',
+          duration: 3 * 1000
         })
+        setTimeout(function(){window.location.href="https://passport.dianchat.net/pass/logout?callback=https://passport.dianchat.net/pass/service_login?callback=http://localhost:8092/login"; },3 * 1000);
+       // window.location.href = 'https://passport.dianchat.net/pass/logout?callback=https://passport.dianchat.net/pass/service_login?callback=http://localhost:8092/login'
+        // 请自行在引入 MessageBox
+       // MessageBox.alert('need login', 'confirm', {
+         // confirmButtonText: 'confirm',
+         //   callback: action => {
+          //    store.dispatch('FedLogOut').then(() => {
+          //     location.reload() // 为了重新实例化vue-router对象 避免bug
+             //
+      //        })
+      //     }
+   //       })
       } else {
         Message({
           message: res.msg,

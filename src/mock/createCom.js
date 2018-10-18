@@ -20,8 +20,8 @@ export default {
   createCom: config => {
     const { userForm, orgForm } = JSON.parse(config.body)
     console.group('create company...')
-    console.log('userForm: %o', userForm)
-    console.log('orgForm: %o', orgForm)
+    //console.log('userForm: %o', userForm)
+    //console.log('orgForm: %o', orgForm)
     console.groupEnd()
 
     return {

@@ -20,7 +20,7 @@
             <el-button
             v-show="showBtn()"
             type="primary"
-            icon="el-icon-edit" @click="outerVisible = true">添加成员</el-button>
+            icon="el-icon-edit" @click="outeraddVisible = true">添加成员</el-button>
           </el-col>
           <el-col :span="4" :offset="12">
           <el-button
@@ -32,7 +32,7 @@
           </el-col>
         </el-row>
         </el-header>
-        <el-main>
+        <el-main style="height:auto;">
           <el-table
             :data="groupMemberData"
             stripe
@@ -261,11 +261,11 @@
           </el-dialog>
 
           <!--添加成员-->
-           <el-dialog title="添加群组成员" :visible.sync="outerVisible">
+           <el-dialog title="添加群组成员" :visible.sync="outeraddVisible">
               <el-dialog
               width="30%"
               title="内层 Dialog"
-              :visible.sync="innerVisible"
+              :visible.sync="inneraddVisible"
               append-to-body>
               </el-dialog>
               <el-container>
@@ -275,16 +275,17 @@
                         <el-input v-model="addform.name"></el-input>
                       </el-form-item>
                       <el-form-item label="联系电话">
-                        <el-input v-model="addform.mebile"></el-input>
+                        <el-input v-model="addform.mobile"></el-input>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button type="primary" icon="el-icon-tickets" @click="inneraddVisible = false">电话通讯录</el-button>
                       </el-form-item>
                     </el-form>
                 </el-main>
               </el-container>
             <div slot="footer" class="dialog-footer">
-
-
-              <el-button @click="outerVisible = false">取 消</el-button>
-              <el-button type="primary" @click="innerVisible = true">确定</el-button>
+              <el-button @click="outeraddVisible = false">取 消</el-button>
+              <el-button type="primary" @click="saveBtnGoup()">确定</el-button>
             </div>
           </el-dialog> 
 
@@ -294,7 +295,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="currentPage"
-              :page-sizes="[10, 30, 50, 100, 200, 500, 1000]"
+              :page-sizes="[4, 30, 50, 100, 200, 500, 1000]"
               :page-size="pagesize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="totalCount">
@@ -307,15 +308,18 @@
 <script>
 import Vue from 'vue'
 import Qs from 'qs'
-import {deleteGroupMember } from '@/api/group'
+import {deleteGroupMember, saveGroupMember, checkGroupMember } from '@/api/group'
 import axios from 'axios'
   export default {
     data() {
       return {
-        outerVisible: false,
-        innerVisible: false,
+        //关闭添加用户的按钮
+        outeraddVisible: false,
+        inneraddVisible: false,
+        //添加组员输入的姓名和号码
         addform: {
-          name: ''
+          name: '',
+          mobile: ''
         },
         groupMemberData: [],
         //表格当前页数据
@@ -329,7 +333,7 @@ import axios from 'axios'
         //下拉菜单选项
         select: '',
         //默认每页数据量
-        pagesize: 10,
+        pagesize:4,
         //默认高亮行数据id
         highlightId: -1,
         //当前页码
@@ -370,8 +374,52 @@ import axios from 'axios'
       }
     },
     methods:{
+        //保存组员的信息
+        saveBtnGoup() {
+          const checkParm = {
+            mobile: this.addform.mobile
+          }
+           //先判断该用户是否已经是群组成员
+            checkGroupMember(checkParm).then(response => {
+            console.log('验证信息%o',response)
+            if (response.code === 0) {
+                const param = {
+                  name: this.addform.name,
+                  mobile: this.addform.mobile
+                }
+                saveGroupMember(param).then(response => {
+                  if (response.code === 0) {
+                    this.$message({
+                      message: '添加群组成员成功！',
+                      type: 'success'
+                    })
+                    this.outeraddVisible = false
+                    axios({
+                      url: '/org/selectViewGroupList',
+                      method: 'post',
+                      transformRequest: [function (data) {
+                          return Qs.stringify(data)
+                      }],
+                      headers: {
+                          'deviceCode': 'A95ZEF1-47B5-AC90BF3'
+                      },
+                      data: {
+                        name: this.criteria,
+                        page: 1,
+                        per_page:this.pagesize
+                      }
+                    }).then((res)=>{
+                      this.totalCount = res.data.data.total
+                      this.currentPage = res.data.data.current_page
+                      this.groupMemberData = res.data.data.data
+                    })
+                  }
+                })
+              }
+          })
+        },
         //查询分给该组员的主机数      
-        searchServer(index,row){
+        searchServer(index,row) {
           const mebile = row.mebile
           const params = {
             token: this.$store.state.user.token,
@@ -382,7 +430,7 @@ import axios from 'axios'
             method: 'post',
             url:'/rdp/assign_list',
             data:params
-          }).then((res)=>{
+          }).then((res)=> {
             if(res.data.result.length===0) {
               this.$message({
                 message: '您没有给该组员分配服务器，没有服务器可以移除！',
@@ -395,7 +443,7 @@ import axios from 'axios'
           })
         },
         //移除服务器
-        deleteRow(index, rows){
+        deleteRow(index, rows) {
           const params = {
             token: this.$store.state.user.token,
             hostid: rows.id,
@@ -405,7 +453,7 @@ import axios from 'axios'
             method: 'post',
             url:'/rdp/remove_service',
             data:params
-          }).then((res)=>{
+          }).then((res)=> {
             if(res.data.code === 0){
               this.$message({
                 message: '成功移除对改用户分配的服务器！',
@@ -504,7 +552,7 @@ import axios from 'axios'
               per_page: pageSize
             }
         }).then((res)=>{
-          this.totalCount = res.data.data.last_page
+          this.totalCount = res.data.data.total
           this.currentPage = res.data.data.current_page
           this.groupMemberData = res.data.data.data
         })             
@@ -570,12 +618,24 @@ import axios from 'axios'
               type: 'success'
             })
             axios({
-                method: 'post',
-                url:'/org/selectViewGroupList',
-                data: ''
+              url: '/org/selectViewGroupList',
+              method: 'post',
+              transformRequest: [function (data) {
+                  return Qs.stringify(data)
+              }],
+              headers: {
+                  'deviceCode': 'A95ZEF1-47B5-AC90BF3'
+              },
+              data: {
+                name: this.criteria,
+                page: pageNum,
+                per_page: pageSize
+              }
             }).then((res)=>{
-                this.groupMemberData = res.data.data.data
-            })
+              this.totalCount = res.data.data.total
+              this.currentPage = res.data.data.current_page
+              this.groupMemberData = res.data.data.data
+            }) 
           }
         })
       },
@@ -629,7 +689,8 @@ import axios from 'axios'
               per_page:this.pagesize
             }
         }).then((res)=>{
-          this.totalCount = res.data.data.last_page
+          console.log("返回数值%o",res.data.data)
+          this.totalCount = res.data.data.total
           this.currentPage = res.data.data.current_page
           this.groupMemberData = res.data.data.data
         })

@@ -40,3 +40,19 @@ export function deleteGroupMember (query) {
 
   })
 }
+//添加组员
+export function saveGroupMember (query) {
+  return request({
+    url: '/org/addGroupMember',
+    method: 'post',
+    params: query
+  })
+}
+//检测群成员是否已经存在
+export function checkGroupMember (query) {
+  return request({
+    url: '/org/checkGroupMember',
+    method: 'post',
+    params: query
+  })
+}

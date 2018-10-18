@@ -18,7 +18,7 @@
           <el-main>
             <el-table
             border
-            style="width:60%"
+            style="width:100%"
             :data="joinData"
             max-height="580">
             <el-table-column
@@ -26,6 +26,12 @@
               align="center" 
               label="群组名称"
               width="200">
+              </el-table-column>
+              <el-table-column
+                prop="groupCreator"
+                align="center" 
+                label="创建人"
+                width="200">
               </el-table-column>
               <el-table-column
                 prop="createDate"
@@ -70,12 +76,18 @@
             <el-table
               border
               :data="createData"
-              style="width:60%"
+              style="width:100%"
               max-height="580">
               <el-table-column
                 prop="name"
                 align="center" 
                 label="群组名称"
+                width="200">
+              </el-table-column>
+              <el-table-column
+                prop="groupCreator"
+                align="center" 
+                label="创建人"
                 width="200">
               </el-table-column>
               <el-table-column
@@ -157,6 +169,7 @@ export default {
         joinGroupCount: '',
         createGroupCount: '',
         active: 0,
+        add_options: [],
         dialogCreateGroup: false,
         dialogJoinGroup: false,
         add_option: [],
@@ -212,11 +225,10 @@ export default {
               message: '已经成功加入群组，请耐心等待管理员审核。。。',
               type: 'success'
             })
-            //查询创建的群组数
+            //查询创建的群组
             axios({
               method: 'post',
               url:'/org/joinGroupList',
-              data: ''
             }).then((res)=>{
               this.joinData = res.data.data.data
             })
@@ -224,7 +236,6 @@ export default {
             axios({
               method: 'post',
               url:'/org/getJionGroupCount',
-              data: ''
             }).then((res)=>{
               this.joinGroupCount = res.data.data.count
             })
@@ -232,7 +243,6 @@ export default {
             axios({
               method: 'post',
               url:'/org/getCreateGroupCount',
-              data: ''
             }).then((res)=>{
               this.createGroupCount = res.data.data.count
             })
@@ -261,7 +271,6 @@ export default {
             axios({
               method: 'post',
               url:'/org/createGroupList',
-              data: ''
             }).then((res)=>{
               this.createData = res.data.data.data
             })
@@ -269,7 +278,6 @@ export default {
             axios({
               method: 'post',
               url:'/org/joinGroupList',
-              data: ''
             }).then((res)=>{
               this.joinData = res.data.data.data
             })
@@ -285,7 +293,6 @@ export default {
             axios({
               method: 'post',
               url:'/org/getCreateGroupCount',
-              data: ''
             }).then((res)=>{
               this.createGroupCount = res.data.data.count
             })
@@ -309,7 +316,6 @@ export default {
       axios({
         method: 'post',
         url:'/org/joinGroupList',
-        data: ''
       }).then((res)=>{
         this.joinData = res.data.data.data
       })
@@ -317,7 +323,6 @@ export default {
       axios({
         method: 'post',
         url:'/org/createGroupList',
-        data: ''
       }).then((res)=>{
         this.createData = res.data.data.data
       })
@@ -325,7 +330,6 @@ export default {
       axios({
         method: 'post',
         url:'/org/getJionGroupCount',
-        data: ''
       }).then((res)=>{
         this.joinGroupCount = res.data.data.count
       })
@@ -333,7 +337,6 @@ export default {
       axios({
         method: 'post',
         url:'/org/getCreateGroupCount',
-        data: ''
       }).then((res)=>{
         this.createGroupCount = res.data.data.count
       })

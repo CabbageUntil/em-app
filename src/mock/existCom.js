@@ -75,7 +75,7 @@ export default {
   /* eslint-enable */
 
   joinCom: config => {
-    console.log('submit form: %o', JSON.parse(config.body))
+    //console.log('submit form: %o', JSON.parse(config.body))
     return {
       code: 0,
       message: 'success'
