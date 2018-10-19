@@ -1,4 +1,6 @@
 <template>
+  <div>
+ 
   <div class="tags-view-container">
     <scroll-pane
       class='tags-view-wrapper'
@@ -25,6 +27,7 @@
       <li @click="closeOthersTags">{{ $t('tagsView.closeOthers') }}</li>
       <li @click="closeAllTags">{{ $t('tagsView.closeAll') }}</li>
     </ul>
+  </div>
   </div>
 </template>
 

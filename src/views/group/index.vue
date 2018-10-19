@@ -107,7 +107,7 @@
                   <el-button
                     size="mini"
                     type="danger"
-                    @click="removeGroup(scope.$index, scope.row)">解散</el-button>
+                    @click="remove_group(scope.$index, scope.row)">解散</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -160,7 +160,7 @@
 </template>
 <script>
 import axios from 'axios'
-import { createGroup, selectgrouptList, joinGroup } from '@/api/group'
+import { createGroup, selectgrouptList, joinGroup, leaveGroup, removeGroup } from '@/api/group'
 name: 'GroupList'
 export default {
     data() {
@@ -186,6 +186,64 @@ export default {
       }
     },
     methods: {
+      //加载数据
+      loadData:function() {
+        //加载未加入群组的信息
+        this.loadNotJoinGroup()    
+        //查询创建的群组
+        this.loadCreateGroupData()
+        //查询加入的群组
+        this.loadJoinGroupData()
+        //查询加入群组的数量
+        this.loadJoinGroupCount()
+        //查询创建群组的数量
+        this.loadCreateGroupCount()
+      },
+      //加载未加入分组
+      loadNotJoinGroup: function(){
+        var _this = this
+        selectgrouptList().then(function (res) {
+          _this.add_options = res.data.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      },
+      //加载加入群组信息
+      loadJoinGroupData: function(){                    
+        axios({
+          method: 'post',
+          url:'/org/joinGroupList',
+        }).then((res)=>{
+          this.joinData = res.data.data.data
+        })
+      },
+      //加载加入群组数量
+      loadJoinGroupCount: function(){                    
+        axios({
+          method: 'post',
+          url:'/org/getJionGroupCount',
+        }).then((res)=>{
+          this.joinGroupCount = res.data.data.count
+        })           
+      },
+      //加载创建群组信息
+      loadCreateGroupData: function(){
+        axios({
+          method: 'post',
+          url:'/org/createGroupList',
+        }).then((res)=>{
+          this.createData = res.data.data.data
+        })  
+      },
+      //加载创建群组数量
+      loadCreateGroupCount: function(){
+        axios({
+          method: 'post',
+          url:'/org/getCreateGroupCount',
+        }).then((res)=>{
+          this.createGroupCount = res.data.data.count
+        })
+      },
       //日期格式化
       dateFormat(row, column, cellValue, index){
         var dateMat = new Date(cellValue)
@@ -209,11 +267,52 @@ export default {
           console.log('登录群组失败: %o', error)
         })
       },
+      //退出群组
       exiteGroup(index, row) {
-        this.$alert("退出群组");
+        this.$confirm('您确定要退出群组吗?', '温馨提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const param = {groupId: row.groupId}
+          leaveGroup(param).then(response => {
+            if (response.code === 0) {
+              this.$message({
+                message: '成功退出！',
+                type: 'success'
+              })
+              this.loadData()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
       },
-      removeGroup(index, row) {
-        this.$alert("解散群组");
+      remove_group(index, row) {
+        this.$confirm('您确定要解散该群组吗?', '温馨提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const param = {groupId: row.groupId}
+          removeGroup(param).then(response => {
+            if (response.code === 0) {
+              this.$message({
+                message: '成功解散群组！',
+                type: 'success'
+              })
+              this.loadData()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
       },
       joinGroup(){
         const param = {
@@ -225,27 +324,7 @@ export default {
               message: '已经成功加入群组，请耐心等待管理员审核。。。',
               type: 'success'
             })
-            //查询创建的群组
-            axios({
-              method: 'post',
-              url:'/org/joinGroupList',
-            }).then((res)=>{
-              this.joinData = res.data.data.data
-            })
-            //查询加入群组的数量
-            axios({
-              method: 'post',
-              url:'/org/getJionGroupCount',
-            }).then((res)=>{
-              this.joinGroupCount = res.data.data.count
-            })
-            //查询创建群组的数量
-            axios({
-              method: 'post',
-              url:'/org/getCreateGroupCount',
-            }).then((res)=>{
-              this.createGroupCount = res.data.data.count
-            })
+            this.loadData()
             this.joinForm.groupId = '',
             this.joinForm.userName = ''
             
@@ -267,35 +346,7 @@ export default {
               message: '创建群组成功',
               type: 'success'
             })
-            //查询创建的群组
-            axios({
-              method: 'post',
-              url:'/org/createGroupList',
-            }).then((res)=>{
-              this.createData = res.data.data.data
-            })
-            //查询加入的群组
-            axios({
-              method: 'post',
-              url:'/org/joinGroupList',
-            }).then((res)=>{
-              this.joinData = res.data.data.data
-            })
-            //查询加入群组的数量
-            axios({
-              method: 'post',
-              url:'/org/getJionGroupCount',
-              data: ''
-            }).then((res)=>{
-              this.joinGroupCount = res.data.data.count
-            })
-            //查询创建群组的数量
-            axios({
-              method: 'post',
-              url:'/org/getCreateGroupCount',
-            }).then((res)=>{
-              this.createGroupCount = res.data.data.count
-            })
+            this.loadData()
           } else {
             this.$message.error('创建群组失败！')
           }
@@ -306,40 +357,7 @@ export default {
       }
     },
     mounted: function () {
-      var _this = this
-      selectgrouptList().then(function (res) {
-        _this.add_options = res.data.data
-      }).catch(function (error) {
-        console.log(error)
-      })
-      //查看加入的群组的信息
-      axios({
-        method: 'post',
-        url:'/org/joinGroupList',
-      }).then((res)=>{
-        this.joinData = res.data.data.data
-      })
-      //查看创建的群组的信息
-      axios({
-        method: 'post',
-        url:'/org/createGroupList',
-      }).then((res)=>{
-        this.createData = res.data.data.data
-      })
-      //查询加入群组的数量
-      axios({
-        method: 'post',
-        url:'/org/getJionGroupCount',
-      }).then((res)=>{
-        this.joinGroupCount = res.data.data.count
-      })
-      //查询创建群组的数量
-      axios({
-        method: 'post',
-        url:'/org/getCreateGroupCount',
-      }).then((res)=>{
-        this.createGroupCount = res.data.data.count
-      })
+      this.loadData()
     }
   }
 </script>

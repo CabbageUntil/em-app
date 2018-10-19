@@ -32,7 +32,7 @@
           </el-col>
         </el-row>
         </el-header>
-        <el-main style="height:auto;">
+        <el-main>
           <el-table
             :data="groupMemberData"
             stripe
@@ -48,6 +48,7 @@
             prop="mebile"
             label="联系方式">
             </el-table-column>
+
             <el-table-column label="操作" width="400">
               <template slot-scope="scope">
                 <el-button
@@ -65,10 +66,10 @@
                   >分配服务器</el-button>
                 <el-button
                   size="mini"
-                  type="danger"
-                  icon="el-icon-delete"
+                  type="primary"
+                  icon="el-icon-tickets"
                   @click="searchServer(scope.$index, scope.row)"
-                  >移除服务器</el-button>
+                  >查看分配服务器</el-button>
               </template>
             </el-table-column>
         </el-table>
@@ -218,8 +219,7 @@
             <el-table
               border
               :data="hostList"
-              style="width: 100%"
-              max-height="200">
+              style="width: 100%">
               <el-table-column
                 prop="alias"
                 label="用户名称"
@@ -381,7 +381,6 @@ import axios from 'axios'
           }
            //先判断该用户是否已经是群组成员
             checkGroupMember(checkParm).then(response => {
-            console.log('验证信息%o',response)
             if (response.code === 0) {
                 const param = {
                   name: this.addform.name,
@@ -394,25 +393,7 @@ import axios from 'axios'
                       type: 'success'
                     })
                     this.outeraddVisible = false
-                    axios({
-                      url: '/org/selectViewGroupList',
-                      method: 'post',
-                      transformRequest: [function (data) {
-                          return Qs.stringify(data)
-                      }],
-                      headers: {
-                          'deviceCode': 'A95ZEF1-47B5-AC90BF3'
-                      },
-                      data: {
-                        name: this.criteria,
-                        page: 1,
-                        per_page:this.pagesize
-                      }
-                    }).then((res)=>{
-                      this.totalCount = res.data.data.total
-                      this.currentPage = res.data.data.current_page
-                      this.groupMemberData = res.data.data.data
-                    })
+                    this.loadData(this.criteria, this.currentPage, this.pagesize)
                   }
                 })
               }
@@ -431,9 +412,9 @@ import axios from 'axios'
             url:'/rdp/assign_list',
             data:params
           }).then((res)=> {
-            if(res.data.result.length===0) {
+            if(res.data.result.length === 0) {
               this.$message({
-                message: '您没有给该组员分配服务器，没有服务器可以移除！',
+                message: '您没有给该组员分配服务器！！！',
                 type: 'warning'
               })
             } else {
@@ -610,33 +591,26 @@ import axios from 'axios'
       },
       //移除群组成员
       deleteServer(index,row){
-        const param = {groupMemberId: row.groupMemberId}
-        deleteGroupMember(param).then(response => {
-          if (response.code === 0) {
-            this.$message({
-              message: '删除群组成员成功！',
-              type: 'success'
-            })
-            axios({
-              url: '/org/selectViewGroupList',
-              method: 'post',
-              transformRequest: [function (data) {
-                  return Qs.stringify(data)
-              }],
-              headers: {
-                  'deviceCode': 'A95ZEF1-47B5-AC90BF3'
-              },
-              data: {
-                name: this.criteria,
-                page: pageNum,
-                per_page: pageSize
-              }
-            }).then((res)=>{
-              this.totalCount = res.data.data.total
-              this.currentPage = res.data.data.current_page
-              this.groupMemberData = res.data.data.data
-            }) 
-          }
+        this.$confirm('删除群组成员前，请移除对该组员分配的服务器, 是否继续删除?', '温馨提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const param = {groupMemberId: row.groupMemberId}
+          deleteGroupMember(param).then(response => {
+            if (response.code === 0) {
+              this.$message({
+                message: '删除群组成员成功！',
+                type: 'success'
+              }) 
+              this.loadData(this.criteria, this.currentPage, this.pagesize)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })         
         })
       },
       dateFormat(row, column, cellValue, index){
@@ -656,7 +630,7 @@ import axios from 'axios'
           this.$store.dispatch('GroupLogout'),
           this.$store.dispatch('toggleLogoutGroup', true)
         ]).then((result) => {
-          this.$router.push({ path: '/' })
+          this.$router.push({ path: '/?' + +new Date() })
         }).catch((error) => {
           console.log('登出群组失败：%o', error)
         })
@@ -689,7 +663,6 @@ import axios from 'axios'
               per_page:this.pagesize
             }
         }).then((res)=>{
-          console.log("返回数值%o",res.data.data)
           this.totalCount = res.data.data.total
           this.currentPage = res.data.data.current_page
           this.groupMemberData = res.data.data.data
@@ -702,7 +675,7 @@ import axios from 'axios'
 <style scoped>
   .container{
     width:99.8%;
-    height:500px;
+    height:auto;
     padding:10px
   }
   .header{

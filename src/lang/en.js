@@ -19,7 +19,8 @@ export default {
     MemberReview: 'MemberReview',
     serverList: 'serverList',
     groupMemberList: 'groupMemberList',
-    ownServerList: 'ownServerList'
+    ownServerList: 'ownServerList',
+    assignMemberList: 'assignMemberList'
   },
   navbar: {
     logOut: 'Log Out',

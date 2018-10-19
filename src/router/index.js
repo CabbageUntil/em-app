@@ -120,6 +120,25 @@ export const asyncRouterMap = [
     }]
   },
   {
+    path: '/assignMemberList',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader'],
+      title: 'assignMemberList',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/assignMemberList'),
+      name: 'assignMemberList',
+      meta: {
+        title: 'assignMemberList',
+        icon: 'list'
+      }
+    }]
+  },
+  {
     path: '/serverList',
     component: Layout,
     meta: {

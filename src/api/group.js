@@ -40,6 +40,22 @@ export function deleteGroupMember (query) {
 
   })
 }
+//退出群组
+export function leaveGroup (query) {
+  return request({
+    url: '/org/leaveGroup/',
+    method: 'post',
+    params: query
+  })
+}
+//解散群组
+export function removeGroup (query) {
+  return request({
+    url: '/org/removegroup/',
+    method: 'post',
+    params: query
+  })
+}
 //添加组员
 export function saveGroupMember (query) {
   return request({

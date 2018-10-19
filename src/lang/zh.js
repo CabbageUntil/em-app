@@ -21,7 +21,8 @@ export default {
     MemberReview: '群成员审核',
     serverList: '被分配的服务器',
     groupMemberList: '群组成员管理',
-    ownServerList: '购买的服务器'
+    ownServerList: '购买的服务器',
+    assignMemberList: '分配服务器'
   },
   navbar: {
     logOut: '退出登录',
