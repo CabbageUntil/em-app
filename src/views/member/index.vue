@@ -93,6 +93,8 @@
             >
             </el-button>
           </el-tooltip>
+
+
           <!--查看已经分配的虚拟主机-->
           <el-tooltip
             class="item"
@@ -258,23 +260,25 @@
           </el-dialog>
 
           <el-dialog
-            title="用户拥有主机"
             :visible.sync="searcheServerDialog"
-            width="60%"
+            width="80%"
             center>
             <el-table
+              border
+              v-loading="loading2"
+              element-loading-text="数据加载中"
+              element-loading-spinner="el-icon-loading"
               :data="hostList"
-              style="width: 100%"
-              max-height="200">
+              style="width: 100%">
               <el-table-column
                 prop="alias"
                 label="用户名称"
-                width="120">
+                width="220">
               </el-table-column>
               <el-table-column
                 prop="sid"
                 label="服务编号"
-                width="120">
+                width="150">
               </el-table-column>
               <el-table-column
                 prop="username"
@@ -294,17 +298,16 @@
               </el-table-column>
               <el-table-column
                 prop="remark"
-                label="备注"
-                width="300">
+                label="备注">
               </el-table-column>
               <el-table-column
-                fixed="right"
                 label="操作"
-                width="120">
+                width="220">
                 <template slot-scope="scope">
                   <el-button
                     @click="deleteRow(scope.$index, scope.row)"
-                    type="text"
+                    icon="el-icon-delete"
+                    type="danger"
                     size="small">
                     移除
                   </el-button>
@@ -335,6 +338,7 @@ export default {
       // 0 待审核、1 已加入、2 已离职、3 全部
       usernames: [],
       visible: true,
+      loading2: true,
       ips_visible: false,
       sid_visible: false,
       checkedValue: 1,
@@ -499,9 +503,17 @@ export default {
           url:'/rdp/assign_list',
           data:params
         }).then((res)=>{
-          this.hostList = res.data.result
+           if(res.data.result.length === 0) {
+              this.$message({
+                message: '您没有给该组员分配服务器！！！',
+                type: 'warning'
+              })
+            } else {
+              this.loading2 = false
+              this.hostList = res.data.result
+              this.searcheServerDialog = true
+            }
         })
-        this.searcheServerDialog = true
       } else if (action === 'sign_server') {
         this.form.alias = rowData.name
         this.form.mobile = rowData.onenetOwner

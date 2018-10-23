@@ -1,4 +1,5 @@
 <template>
+  
   <div class="menu-wrapper">
     <template
       v-for="item in routes"
@@ -58,11 +59,10 @@
           </router-link>
         </template>
       </el-submenu>
-
     </template>
   </div>
-</template>
 
+</template>
 <script>
 import { generateTitle } from '@/utils/i18n'
 

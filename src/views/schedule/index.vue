@@ -35,12 +35,14 @@
           type="primary"
           size="small"
           plain
+          v-show="showBtn()"
           @click="dialogFormVisible = true">
           {{ $t('table.buttonHint.scheduleList.radio.create_schedule') }}
         </el-button>
         <el-button
           type="danger"
           size="small"
+          v-show="showBtn()"
           @click="selectRows()"
           plain>
           {{ $t('table.buttonHint.scheduleList.radio.all_remove') }}
@@ -218,6 +220,7 @@
           >
             <el-button
               type="danger"
+              v-show="showBtn()"
               @click="onAction('remove', props.rowData, props.rowIndex)"
               circle
               icon="el-icon-delete"/>
@@ -296,6 +299,14 @@ export default {
     }
   },
   methods: {
+    showBtn(){
+      const role = this.$store.getters.roles[0]
+      if(role === 'member'){
+        return false
+      } else {
+          return true
+      }
+    },
     selectRows () {
       let tableObj = this.$refs.apartmentListTable.$refs.vuetable
       let selectIds = this.$refs.apartmentListTable.$refs.vuetable.selectedTo

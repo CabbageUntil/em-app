@@ -2,18 +2,19 @@ import i18n from '@/lang'
 
 let prefix = 'table.fields'
 export const existApartmentTableFields = [
+  
   {
     name: 'deptName',
     title: () => i18n.t(prefix + '.apartmentList.deptName')
   },
   {
+    name: 'parentName',
+    title: () => i18n.t(prefix + '.apartmentList.parentName')
+  },
+  {
     name: 'deptStatus',
     title: () => i18n.t(prefix + '.apartmentList.deptStatus'),
     callback: 'formatApartmentStatus'
-  },
-  {
-    name: 'parentName',
-    title: () => i18n.t(prefix + '.apartmentList.parentName')
   },
   {
     name: 'deptCreateDatetime',

@@ -37,8 +37,14 @@
             :data="groupMemberData"
             stripe
             border
-            style="width: 100%">
             :row-class-name="tableRowClassName"
+            style="width: 100%">
+            <el-table-column  type="expand">
+               <template style="padding: 0px 0px;"  slot-scope="scope">
+                  <childtable  :mebile="scope.row.mebile"></childtable>
+              </template>
+            </el-table-column>
+            
             <el-table-column
             prop="name"
             label="姓名">
@@ -308,9 +314,13 @@
 <script>
 import Vue from 'vue'
 import Qs from 'qs'
+import childtable  from './childtable'
 import {deleteGroupMember, saveGroupMember, checkGroupMember } from '@/api/group'
 import axios from 'axios'
   export default {
+    components: {
+        childtable
+    },
     data() {
       return {
         //关闭添加用户的按钮
@@ -354,6 +364,7 @@ import axios from 'axios'
         innerVisible: false,
         searcheServerDialog: false,
         hostList: [],
+        hostList2: [],
         form: {
           username: 'administrator',
           mobile: '',
@@ -401,27 +412,7 @@ import axios from 'axios'
         },
         //查询分给该组员的主机数      
         searchServer(index,row) {
-          const mebile = row.mebile
-          const params = {
-            token: this.$store.state.user.token,
-            assign_user: mebile,
-            app_name: 'aanets'
-          }
-          axios({
-            method: 'post',
-            url:'/rdp/assign_list',
-            data:params
-          }).then((res)=> {
-            if(res.data.result.length === 0) {
-              this.$message({
-                message: '您没有给该组员分配服务器！！！',
-                type: 'warning'
-              })
-            } else {
-              this.hostList = res.data.result
-              this.searcheServerDialog = true
-            }
-          })
+          this.loadAssignData(row.mebile)
         },
         //移除服务器
         deleteRow(index, rows) {
@@ -516,6 +507,29 @@ import axios from 'axios'
       },
       search: function(){
           this.loadData(this.criteria, this.currentPage, this.pagesize);
+      },
+      //查询给指定用户分配的主机
+      loadAssignData: function(mebile){
+        const params = {
+            token: this.$store.state.user.token,
+            assign_user: mebile,
+            app_name: 'aanets'
+          }
+          axios({
+            method: 'post',
+            url:'/rdp/assign_list',
+            data:params
+          }).then((res)=> {
+            if(res.data.result.length === 0) {
+              this.$message({
+                message: '您没有给该组员分配服务器！！！',
+                type: 'warning'
+              })
+            } else {
+              this.hostList = res.data.result
+              this.searcheServerDialog = true
+            }
+          })
       },
       loadData: function(criteria, pageNum, pageSize){                    
          axios({

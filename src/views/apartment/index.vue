@@ -6,7 +6,9 @@
         <el-col
           :span="12"
           :offset="1">
-          <el-radio-group v-model="status">
+          <el-radio-group 
+          v-show="showBtn()"
+          v-model="status">
             <el-radio
               type="check"
               :label="1">{{ $t('table.buttonHint.apartment.radio.note1') }}</el-radio>
@@ -16,6 +18,7 @@
            <el-button
              type="primary"
              style="margin-left:15px;"
+              v-show="showBtn()"
              @click="dialogFormVisible = true"
              plain>新建部门</el-button>
         </el-col>
@@ -27,6 +30,7 @@
         ref="apartmentListTable"
         :fields="existComTableFields">
         <div
+          v-show="showBtn()"
           slot="actions"
           slot-scope="props">
             <el-tooltip
@@ -85,7 +89,6 @@
 <script>
 import MyVuetable from '@/components/Table/MyVuetable'
 import { existApartmentTableFields } from './fields.js'
-
 import { removeApartment , addApartment , selectdeptList } from '@/api/apartment'
 export default {
   name: 'Apartment',
@@ -115,6 +118,14 @@ export default {
     }
   },
   methods: {
+    showBtn(){
+      const role = this.$store.getters.roles[0]
+      if(role === 'member'){
+        return false
+      } else {
+          return true
+      }
+    },
     saveInfo(){
       let tableObj = this.$refs.apartmentListTable.$refs.vuetable
       addApartment(this.form).then(response => {
@@ -125,6 +136,7 @@ export default {
             message: "添加部门成功！！",
             type: 'success'
           })
+          this.loadDeptData()
           tableObj.reload()
         } else {
           this.$message({
@@ -165,15 +177,18 @@ export default {
           this.$message(this.$t('form.common.message.cancel'))
         })
       }
+    },
+    loadDeptData: function(){
+      var _this = this
+      selectdeptList().then(function (res) {
+        _this.options = res.data.data
+      }).catch(function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function () {
-    var _this = this
-    selectdeptList().then(function (res) {
-      _this.options = res.data.data
-    }).catch(function (error) {
-      console.log(error);
-    });
+    this.loadDeptData()
   }
 }
 </script>
