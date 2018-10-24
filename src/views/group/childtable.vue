@@ -1,7 +1,21 @@
 <template>
+    <div>
+     <el-alert
+        v-show="visiblealert"
+        title=""
+        type="warning"
+        :closable="false"
+        description="没有服务器数据！！！"
+        show-icon>
+    </el-alert>
+    <el-button
+        v-show="visibleLoad"
+        style="border:none;"
+        :loading="true">数据在中请稍后......</el-button>
     <el-table
+    v-show="visible"
     border
-    style="padding: 1px 0px;"
+    v-loading="loading"
     :data="hostList2">
         <el-table-column
         prop="alias"
@@ -40,16 +54,22 @@
             </el-button>
         </template>
         </el-table-column>
-    </el-table>  
+    </el-table> 
+    </div> 
 </template>
 <script>
 import Vue from 'vue'
 import Qs from 'qs'
 import axios from 'axios'
+import { Loading } from 'element-ui'
 export default {
      data() {
       return {
-        hostList2: []
+        hostList2: [],
+        loading: true,
+        visible: false,
+        visibleLoad: true,
+        visiblealert: false
       }
     },
     props: {
@@ -59,26 +79,26 @@ export default {
     methods: {
         //移除服务器
         deleteRow(index, rows) {
-            console.log(1)
-            const params = {
+        const params = {
             token: this.$store.state.user.token,
             hostid: rows.id,
             app_name: 'aanets'
+        }
+        axios({
+        method: 'post',
+        url:'/rdp/remove_service',
+        data:params
+        }).then((res)=> {
+            this.visibleLoad = false
+            if(res.data.code === 0){
+                this.$message({
+                    message: '成功移除对改用户分配的服务器！',
+                    type: 'success'
+                })
+                this.loadAssign(this.mebile)
             }
-            axios({
-            method: 'post',
-            url:'/rdp/remove_service',
-            data:params
-            }).then((res)=> {
-                if(res.data.code === 0){
-                    this.$message({
-                        message: '成功移除对改用户分配的服务器！',
-                        type: 'success'
-                    })
-                    this.loadAssign(this.mebile)
-                }
-            })
-        },
+        })
+      },
       //查询给指定用户分配的主机
       loadAssign: function(mebile){
         const params = {
@@ -91,7 +111,16 @@ export default {
             url:'/rdp/assign_list',
             data:params
           }).then((res)=> {
+            this.visibleLoad = false
+            if(res.data.code === 0) {
+                
               this.hostList2 = res.data.result
+              this.visible = true
+            } else {
+                this.visible = false
+                this.loading = true
+                this.visiblealert = true
+            }
           })
       },
       dateFormat(row, column, cellValue, index){
@@ -107,7 +136,6 @@ export default {
       }
     },
     mounted() {
-        console.log(this.mebile)
         this.loadAssign(this.mebile)
     }
 }

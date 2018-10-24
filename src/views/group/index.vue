@@ -1,6 +1,62 @@
 <template>
   <div class="grouplist">
     <el-tabs type="border-card">
+      <el-tab-pane label="管理的群组">
+        <el-container>
+          <el-aside>
+            <el-row>
+              <el-button icon = "el-icon-location" type="primary butList" >
+              <p style="font-size:15px;padding-top:30px;">拥有群组数：<span style="
+              font-size: 18px;color: #EEEEEE;">{{createGroupCount}}</span></p>
+              </el-button>
+            </el-row>
+            <el-row>
+              <el-button type="primary" @click="dialogCreateGroup = true">创建群组</el-button>
+              <el-button type="success" @click="dialogJoinGroup = true">加入群组</el-button>
+            </el-row>
+          </el-aside>
+          <el-main>
+            <el-table
+              border
+              :data="createData"
+              style="width:100%"
+              max-height="580">
+              <el-table-column
+                prop="name"
+                align="center" 
+                label="群组名称"
+                width="200">
+              </el-table-column>
+              <el-table-column
+                prop="groupCreator"
+                align="center" 
+                label="创建人"
+                width="200">
+              </el-table-column>
+              <el-table-column
+                align="center" 
+                prop="createDate"
+                :formatter="dateFormat" 
+                label="创建日期"
+                width="200">
+              </el-table-column> 
+              <el-table-column 
+               align="center" 
+               label="操作" >
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    @click="enterGroup(scope.$index, scope.row)">进入</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="remove_group(scope.$index, scope.row)">解散</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-main>
+        </el-container>
+      </el-tab-pane>
       <el-tab-pane  label="加入的群组">
         <el-container>
           <el-aside width="200">
@@ -56,62 +112,6 @@
             </el-table>
             </el-main>
           </el-container>
-        </el-container>
-      </el-tab-pane>
-      <el-tab-pane label="管理的群组">
-        <el-container>
-          <el-aside>
-            <el-row>
-              <el-button icon = "el-icon-location" type="primary butList" >
-              <p style="font-size:15px;padding-top:30px;">拥有群组数：<span style="
-              font-size: 18px;color: #EEEEEE;">{{createGroupCount}}</span></p>
-              </el-button>
-            </el-row>
-            <el-row>
-              <el-button type="primary" @click="dialogCreateGroup = true">创建群组</el-button>
-              <el-button type="success" @click="dialogJoinGroup = true">加入群组</el-button>
-            </el-row>
-          </el-aside>
-          <el-main>
-            <el-table
-              border
-              :data="createData"
-              style="width:100%"
-              max-height="580">
-              <el-table-column
-                prop="name"
-                align="center" 
-                label="群组名称"
-                width="200">
-              </el-table-column>
-              <el-table-column
-                prop="groupCreator"
-                align="center" 
-                label="创建人"
-                width="200">
-              </el-table-column>
-              <el-table-column
-                align="center" 
-                prop="createDate"
-                :formatter="dateFormat" 
-                label="创建日期"
-                width="200">
-              </el-table-column> 
-              <el-table-column 
-               align="center" 
-               label="操作" >
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    @click="enterGroup(scope.$index, scope.row)">进入</el-button>
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    @click="remove_group(scope.$index, scope.row)">解散</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-main>
         </el-container>
       </el-tab-pane>
     </el-tabs>

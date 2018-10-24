@@ -119,6 +119,7 @@ export const asyncRouterMap = [
       }
     }]
   },
+
   {
     path: '/assignMemberList',
     component: Layout,

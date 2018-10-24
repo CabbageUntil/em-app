@@ -39,7 +39,7 @@
             border
             :row-class-name="tableRowClassName"
             style="width: 100%">
-            <el-table-column  type="expand">
+            <el-table-column    type="expand">
                <template style="padding: 0px 0px;"  slot-scope="scope">
                   <childtable  :mebile="scope.row.mebile"></childtable>
               </template>
