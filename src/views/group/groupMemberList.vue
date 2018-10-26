@@ -81,7 +81,7 @@
         </el-table>
 
          <!-- 分配虚拟主机 -->
-          <el-dialog title="分配服务器" :visible.sync="outerVisibles">
+          <el-dialog  title="分配服务器" :visible.sync="outerVisibles">
             <el-dialog
               width = "30%"
               :visible.sync="innerVisible"
@@ -91,14 +91,12 @@
                 style="width: 100%">
                 <el-table-column
                   prop="sid"
-                  label="主机编号"
-                  sortable
+                  label="服务编号"
                   width="180">
                 </el-table-column>
                 <el-table-column
                   prop="ips"
                   label="IP地址"
-                  sortable
                   width="180">
                 </el-table-column>
                 <el-table-column
@@ -135,6 +133,14 @@
                 autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item
+              label="选择服务器"
+              v-show="visible"
+              :label-width="formLabelWidth">
+                <el-button
+                type="success"
+                @click="innerVisible = true">{{buttonText}}</el-button>
+              </el-form-item>
+              <el-form-item
               label="服务编号"
               v-show = "sid_visible"
               :label-width="formLabelWidth">
@@ -161,22 +167,21 @@
                 autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item
-              label="选择服务器账号"
+              label="选择账户"
               v-show="ips_visible"
               :label-width="formLabelWidth">
-                <el-radio-group v-model="form.username">
-                  <el-radio v-for="city in usernames" :label="city" :key="city">{{city}}</el-radio>
-                </el-radio-group>
+                <el-switch
+                  on-value="1"
+                  off-value="0"
+                  inactive-text="自动选择"
+                  v-model="form.auto_select_system"></el-switch><br>
+                  <div class="user_checkbox">
+                    <el-radio-group v-model="form.username">
+                      <el-radio v-for="city in usernames" :label="city" :key="city">{{city}}</el-radio>
+                    </el-radio-group>
+                  </div>
               </el-form-item>
 
-              <el-form-item
-              label="选择服务器"
-              v-show="visible"
-              :label-width="formLabelWidth">
-                <el-button
-                type="success"
-                @click="innerVisible = true">选择服务器</el-button>
-              </el-form-item>
               <el-form-item
               label="权限"
               :label-width="formLabelWidth">
@@ -196,12 +201,13 @@
                   <el-date-picker
                     v-model="form.datetime"
                     type="datetime"
+                    @change = "DateControl"
                     value-format="timestamp"
                     placeholder="选择日期">
-                  </el-date-picker>
+                  </el-date-picker><br>
                   <el-switch
-                  on-value="1"
-                  off-value="0"
+                  on-value="true"
+                  off-value="false"
                   inactive-text="默认服务器时间"
                   v-model="form.datestatus"></el-switch>
                 </div>
@@ -301,7 +307,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="currentPage"
-              :page-sizes="[4, 30, 50, 100, 200, 500, 1000]"
+              :page-sizes="[10, 20, 30, 50, 100, 200, 500, 1000]"
               :page-size="pagesize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="totalCount">
@@ -323,6 +329,8 @@ import axios from 'axios'
     },
     data() {
       return {
+        //选择服务器标题
+        buttonText: '',
         //关闭添加用户的按钮
         outeraddVisible: false,
         inneraddVisible: false,
@@ -343,7 +351,7 @@ import axios from 'axios'
         //下拉菜单选项
         select: '',
         //默认每页数据量
-        pagesize:4,
+        pagesize:10,
         //默认高亮行数据id
         highlightId: -1,
         //当前页码
@@ -356,17 +364,18 @@ import axios from 'axios'
         // 0 待审核、1 已加入、2 已离职、3 全部
         usernames: [],
         visible: true,
+        //服务器编号和ip编号输入框状态
         ips_visible: false,
         sid_visible: false,
-        checkedValue: 1,
         roles: this.$store.getters.roles,
+        //选择服务器弹出框状态
         outerVisibles: false,
         innerVisible: false,
         searcheServerDialog: false,
         hostList: [],
         hostList2: [],
         form: {
-          username: 'administrator',
+          username: '',
           mobile: '',
           expire_time: '',
           datetime: '',
@@ -377,14 +386,33 @@ import axios from 'axios'
           allow_upinfo: '0',
           allow_reboot: '0',
           allow_assign: '0',
+          auto_select_system: '0',
           alias: '',
-          datestatus: '1'
+          datestatus:false
         },
         hostData: [],
         formLabelWidth: '120px'
       }
     },
     methods:{
+        //日期控制 用户选择时间超过当前系统时间 默认系统时间
+        DateControl(){
+          if(this.form.expire_time!=''){
+            const ex = this.form.expire_time*1000
+            const d = this.form.datetime
+            //比较二者时间
+            if(ex<d){
+              this.$message({
+                type: 'warning',
+                message: '选择服务器到期时间已经超过服务器租用时间,系统默认选择服务器过期时间！'
+              });
+              this.form.datestatus = true
+              this.form.datetime = ex
+            } else {
+              this.form.datetime = d
+            }
+          }
+        },
         //保存组员的信息
         saveBtnGoup() {
           const checkParm = {
@@ -416,8 +444,9 @@ import axios from 'axios'
         },
         //移除服务器
         deleteRow(index, rows) {
+          const token = this.$store.state.user.token
           const params = {
-            token: this.$store.state.user.token,
+            token: token,
             hostid: rows.id,
             app_name: 'aanets'
           }
@@ -439,15 +468,16 @@ import axios from 'axios'
         saveHost() {
           var upstatus
           var bootstatus
-          var datetime
           this.form.allow_upinfo ? upstatus = 1 : upstatus = 0
           this.form.allow_reboot ? bootstatus = 1 : bootstatus = 0
           if(this.form.sid === '') {
             this.$alert('请选择服务器', '温馨提醒')
           } else {
-            if(this.form.datetime ===''&&!this.form.datestatus){
-              this.$alert('请选择截止时间', '温馨提醒')
+            //判断系统账户是否选择
+            if(this.form.username ===''&&!this.form.auto_select_system){
+              this.$alert('账户选择不能为空！', '温馨提醒')
             } else {
+              var datetime
               if(this.form.datestatus){
                 datetime =  this.form.expire_time
                 //this.outerVisibles = false
@@ -455,9 +485,10 @@ import axios from 'axios'
                 datetime =  this.form.datetime/1000
               }
               //分配虚拟主机
+              const token = this.$store.state.user.token
               const params = {
                 sid: this.form.sid,
-                token: this.$store.state.user.token,
+                token: token,
                 mobile: this.form.mobile,
                 auto_assign: 0,
                 username: this.form.username,
@@ -480,10 +511,60 @@ import axios from 'axios'
                   })
                   this.outerVisibles = false
                 }else{
-                  this.$message({
-                    message: '分配服务器失败！'+res.data.detail,
-                    type: 'error'
-                  })
+                   this.$confirm('分配服务器失败！'+res.data.detail+".是否立即帮该组员注册帐户", '温馨提醒', {
+                    confirmButtonText: '注册',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }).then(() => {
+                    const registeparams = {
+                      mobile: this.form.mobile,
+                      password: this.form.mobile,
+                      nickname:  this.form.alias,
+                    }
+                    axios({
+                      method: 'post',
+                      url:'/rdp/tel_book_register',
+                      data:registeparams
+                    }).then((res)=> {
+                      if(res.data.result.data !=null){
+                        if(res.data.result.data.already === 1) {
+                           this.$confirm('该用户已经注册！是否需要给相应的用户发送短信通知下载aardp', '温馨提醒', {
+                            confirmButtonText: '发送',
+                            cancelButtonText: '不发送',
+                            type: 'warning'
+                          }).then(() => {
+                            
+                          }).catch(() => {
+                            this.outerVisibles = false  
+                          });
+                        } else {
+                            this.$confirm('该用户注册成功！是否需要给相应的用户发送短信通知下载aardp', '温馨提醒', {
+                            confirmButtonText: '发送',
+                            cancelButtonText: '不发送',
+                            type: 'warning'
+                          }).then(() => {
+                             this.$message({
+                              message: '注册失败！！',
+                              type: 'error'
+                            })
+                          }).catch(() => {
+                            this.outerVisibles = false  
+                          });
+                        }
+                      } else{
+                         this.$message({
+                          message: '注册失败！！',
+                          type: 'error'
+                        })
+                      }
+                    })
+                  }).catch(() => {
+                    this.$message({
+                      message: '取消注册',
+                      type: 'error'
+                    })
+                    this.outerVisibles = false         
+                  });
                 }
               })
             }
@@ -510,8 +591,9 @@ import axios from 'axios'
       },
       //查询给指定用户分配的主机
       loadAssignData: function(mebile){
+        const token = this.$store.state.user.token
         const params = {
-            token: this.$store.state.user.token,
+            token: token,
             assign_user: mebile,
             app_name: 'aanets'
           }
@@ -520,7 +602,7 @@ import axios from 'axios'
             url:'/rdp/assign_list',
             data:params
           }).then((res)=> {
-            if(res.data.result.length === 0) {
+            if(res.data.code != 0) {
               this.$message({
                 message: '您没有给该组员分配服务器！！！',
                 type: 'warning'
@@ -531,6 +613,7 @@ import axios from 'axios'
             }
           })
       },
+      //查询用户的数据
       loadData: function(criteria, pageNum, pageSize){                    
          axios({
             url: '/org/selectViewGroupList',
@@ -568,17 +651,30 @@ import axios from 'axios'
         this.form.ips = row.ips
         this.form.expire_time = row.expire_time
         const arr = row.users
+        //获取当前时间往后一个月的时间
+        const date = new Date()
+        const ex = row.expire_time*1000
+        const d = date.getTime() + 3600*1000 *24*30
+        //比较二者时间
+        if(ex<d){
+          this.form.datetime = ex
+        } else {
+          this.form.datetime = d
+        }
+        //选择服务器的时候先将服务器用户的列表清空 和 选项
+        this.form.username = ''
+        this.usernames = []
         for (var index in arr) {
           this.usernames.push(arr[index].username)
         }
         this.innerVisible = false
-        this.sid != ''  ? this.visible = false : this.visible = true
+        //显示重新选择
+        this.form.username = ''
+        this.buttonText = this.form.ips !=''?'重选':'选择服务器'
         this.sid != ''  ? this.sid_visible = true : this.sid_visible = false
         this.sid != ''  ? this.ips_visible = true : this.ips_visible = false
-
-
       },
-      //分配服务器
+      //查询购买的服务器
       siginServer(index,row){
         this.visible = true
         this.ips_visible = false
@@ -586,11 +682,14 @@ import axios from 'axios'
         this.usernames = []
         this.hostList = []
         this.form.sid = ''
+        this.buttonText = '选择服务器'
         this.form.alias = row.name
         this.form.mobile = row.mebile
+        const token = this.$store.state.user.token
         const params = {
-          token: this.$store.state.user.token,
-          app_name: 'aanets'
+          token: token,
+          app_name: 'aanets',
+          is_only_sid: 1
         }
         
         axios({
@@ -630,8 +729,8 @@ import axios from 'axios'
       dateFormat(row, column, cellValue, index){
         var dateMat = new Date(cellValue*1000)
         const year = dateMat.getFullYear();
-        const month = dateMat.getMonth() + 1;
-        const day = dateMat.getDate();
+        const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
+        const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();
         const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
         const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
         const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
@@ -662,20 +761,21 @@ import axios from 'axios'
       this.handleLoginGroup()
     },
     mounted: function (){
+        this.buttonText = this.form.ips !=''?'重选':'选择服务器'
         axios({
-            url: '/org/selectViewGroupList',
-            method: 'post',
-            transformRequest: [function (data) {
-                return Qs.stringify(data)
-            }],
-            headers: {
-                'deviceCode': 'A95ZEF1-47B5-AC90BF3'
-            },
-            data: {
-              name: this.criteria,
-              page: 1,
-              per_page:this.pagesize
-            }
+          url: '/org/selectViewGroupList',
+          method: 'post',
+          transformRequest: [function (data) {
+              return Qs.stringify(data)
+          }],
+          headers: {
+              'deviceCode': 'A95ZEF1-47B5-AC90BF3'
+          },
+          data: {
+            name: this.criteria,
+            page: 1,
+            per_page:this.pagesize
+          }
         }).then((res)=>{
           this.totalCount = res.data.data.total
           this.currentPage = res.data.data.current_page
@@ -688,9 +788,9 @@ import axios from 'axios'
 
 <style scoped>
   .container{
-    width:99.8%;
+    width:100%;
     height:auto;
-    padding:10px
+    padding:0px
   }
   .header{
     background: #2196f317;
@@ -700,5 +800,11 @@ import axios from 'axios'
   }
   .el-table .success-row {
     background: #f0f9eb;
+  }
+  .user_checkbox{
+    border-radius: 4px;
+    color: #fff;
+    padding: 14px 15px;
+    background-color: #B3E5FC;
   }
 </style>

@@ -67,7 +67,6 @@ export function dissolveCom (orgId) {
   })
 }
 export function getServer(){
-  console.log('查询服务器')
   return request({
     url: '/org/getServer',
     method: 'get'

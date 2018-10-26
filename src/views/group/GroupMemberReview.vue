@@ -45,7 +45,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
-            :page-sizes="[5, 10, 20, 50]"
+            :page-sizes="[10, 20, 50, 100, 200, 500]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
@@ -63,7 +63,7 @@ import axios from 'axios'
       return {
         visible: false,
         visibleLoad: true,
-        pageSize: 5, // 每页大小默认值
+        pageSize:10, // 每页大小默认值
         pageIndex: 1, // 默认第一页
         search: '',
         tableData: []
@@ -92,8 +92,8 @@ import axios from 'axios'
       dateFormat(row, column, cellValue, index){
         var dateMat = new Date(cellValue*1000)
         const year = dateMat.getFullYear();
-        const month = dateMat.getMonth() + 1;
-        const day = dateMat.getDate();
+        const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
+        const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();
         const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
         const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
         const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();

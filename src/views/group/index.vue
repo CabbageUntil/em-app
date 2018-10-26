@@ -246,10 +246,10 @@ export default {
       },
       //日期格式化
       dateFormat(row, column, cellValue, index){
-        var dateMat = new Date(cellValue)
+        var dateMat = new Date(cellValue*1000)
         const year = dateMat.getFullYear();
-        const month = dateMat.getMonth() + 1;
-        const day = dateMat.getDate();
+        const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
+        const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();
         const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
         const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
         const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();

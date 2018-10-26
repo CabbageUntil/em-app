@@ -15,10 +15,15 @@
             stripe
             border
             :fit="true">
+            <el-table-column    type="expand">
+               <template style="padding: 0px 0px;"  slot-scope="scope">
+                  <childserver  :ips="scope.row.ips"></childserver>
+              </template>
+            </el-table-column>
 
             <el-table-column
             prop="sid"
-            label="服务器编号">
+            label="服务编号">
             </el-table-column>
 
             <el-table-column
@@ -49,7 +54,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
-            :page-sizes="[2, 3, 4, 5]"
+            :page-sizes="[10, 20, 30, 50,100]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
@@ -61,14 +66,18 @@
 </template>
 <script>
 import Vue from 'vue'
+import childserver  from './childserver'
 import moment from 'moment'
 import axios from 'axios'
   export default {
+    components: {
+        childserver
+    },
     data() {
       return {
         visible: false,
         visibleLoad: true,
-        pageSize: 2, // 每页大小默认值
+        pageSize: 10, // 每页大小默认值
         pageIndex: 1, // 默认第一页
         search: '',
         tableData: []
@@ -78,28 +87,29 @@ import axios from 'axios'
     methods:{
       //服务器日期格式化
       dateFormat(row, column, cellValue, index){
-        var dateMat = new Date(cellValue*1000)
+       var dateMat = new Date(cellValue*1000)
         const year = dateMat.getFullYear();
-        const month = dateMat.getMonth() + 1;
-        const day = dateMat.getDate();
-        const hh = dateMat.getHours();
-        const mm = dateMat.getMinutes();
-        const ss = dateMat.getSeconds();
+        const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
+        const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();
+        const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
+        const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
+        const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
         const timeFormat= year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
         return timeFormat;
       },
       //查询购买的服务器的列表
       loadOwnServer: function() {
+        const token = this.$store.state.user.token
         const params = {
-          token: this.$store.state.user.token,
-          app_name: 'aanets'
+          token: token,
+          app_name: 'aanets',
+          is_only_sid: 1
         }
         axios({
             method: 'post',
             url:'/rdp/server',
             data:params
         }).then((res)=>{
-            console.log('购买的服务器的项目列表%o',res.data)
             if(res.data.code === 0) {
               this.visibleLoad = false
               this.visible = true
@@ -118,9 +128,6 @@ import axios from 'axios'
         } else {
           return val
         }
-      },
-      dateFormat (val) {
-        return moment(val).format('YYYY-MM-DD')
       },
       handleSizeChange (val) {
         this.pageSize = val
@@ -172,7 +179,7 @@ import axios from 'axios'
 <style scoped>
   .container{
     width:99.8%;
-    height:500px;
+    height:auto;
     padding:10px
   }
 </style>

@@ -376,8 +376,9 @@ export default {
   },
   methods: { 
     deleteRow(index, rows){
+      const token = this.$store.state.user.token
       const params = {
-        token: this.$store.state.user.token,
+        token: token,
         hostid: rows.id,
         app_name: 'aanets'
       }
@@ -413,9 +414,10 @@ export default {
           } else{
             datetime =  this.form.datetime/1000
           }
+          const token = this.$store.state.user.token
           const params = {
             sid: this.form.sid,
-            token: this.$store.state.user.token,
+            token: token,
             mobile: this.form.mobile,
             auto_assign: 0,
             username: this.form.username,
@@ -493,10 +495,12 @@ export default {
         this.$router.push({ path: '/member/view/' + rowData.id })
       }  else if (action === 'search_server') {
         const mebile = rowData.onenetOwner
+        const token = this.$store.state.user.token
         const params = {
-          token: this.$store.state.user.token,
+          token: token,
           assign_user: mebile,
-          app_name: 'aanets'
+          app_name: 'aanets',
+          is_expire: 2
         }
         axios({
           method: 'post',
@@ -517,9 +521,11 @@ export default {
       } else if (action === 'sign_server') {
         this.form.alias = rowData.name
         this.form.mobile = rowData.onenetOwner
+        const token = this.$store.state.user.token
         const params = {
-          token: this.$store.state.user.token,
-          app_name: 'aanets'
+          token: token,
+          app_name: 'aanets',
+          is_only_sid: 1
         }
         axios({
           method: 'post',

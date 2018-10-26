@@ -21,8 +21,12 @@
         :fit="true">
         <el-table-column
         prop="sid"
+        label="服务编号">
+        </el-table-column>
 
-        label="服务器编号">
+        <el-table-column
+        prop="from_username"
+        label="服务器分配人">
         </el-table-column>
 
         <el-table-column
@@ -47,7 +51,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageIndex"
-          :page-sizes="[2, 3, 4, 5]"
+          :page-sizes="[10, 20, 30, 50, 100, 200, 500]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total">
@@ -65,7 +69,7 @@ import axios from 'axios'
         visible: false,
         visibleLoad: true,
         visiblealert: false,
-        pageSize: 2, // 每页大小默认值
+        pageSize: 10, // 每页大小默认值
         pageIndex: 1, // 默认第一页
         search: '',
         tableData: []
@@ -76,25 +80,26 @@ import axios from 'axios'
       dateFormat(row, column, cellValue, index){
         var dateMat = new Date(cellValue*1000)
         const year = dateMat.getFullYear();
-        const month = dateMat.getMonth() + 1;
-        const day = dateMat.getDate();
-        const hh = dateMat.getHours();
-        const mm = dateMat.getMinutes();
-        const ss = dateMat.getSeconds();
+        const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
+        const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();
+        const hh = dateMat.getHours() < 10 ? '0' + dateMat.getHours():dateMat.getHours() ;
+        const mm = dateMat.getMinutes() < 10 ? '0' + dateMat.getMinutes() : dateMat.getMinutes() ;
+        const ss = dateMat.getSeconds() < 10 ? '0' + dateMat.getSeconds() : dateMat.getSeconds();
         const timeFormat= year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
         return timeFormat;
       },
       //查询被分配的服务器
       loadServerData: function() {
+        const token = this.$store.state.user.token
         const params = {
-          token: this.$store.state.user.token
+          token: token,
+          is_only_sid: 1
         }
         axios({
             method: 'post',
             url:'/rdp/server',
             data:params
         }).then((res)=>{
-          console.log('查询结果集%o',res.data)
           if(res.data.code ===0 ) {
               this.visible = true
               this.visibleLoad = false
@@ -114,9 +119,6 @@ import axios from 'axios'
         } else {
           return val
         }
-      },
-      dateFormat (val) {
-        return moment(val).format('YYYY-MM-DD')
       },
       handleSizeChange (val) {
         this.pageSize = val
