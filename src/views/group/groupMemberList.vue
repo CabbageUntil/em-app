@@ -16,13 +16,21 @@
             @click="search"
             icon="el-icon-search" >查询</el-button>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="3">
             <el-button
             v-show="showBtn()"
             type="primary"
-            icon="el-icon-edit" @click="outeraddVisible = true">添加成员</el-button>
+            icon="el-icon-circle-plus-outline"
+            @click="openaddMeber">直接添加成员</el-button>
           </el-col>
-          <el-col :span="4" :offset="12">
+          <el-col :span="3">
+            <el-button
+            v-show="showBtn()"
+            type="warning"
+            icon="el-icon-tickets"
+            @click="openSelectPhoneList">同步电话通讯录添加成员</el-button>
+          </el-col>
+          <el-col :span="4" :offset="8">
           <el-button
             type="danger"
             size = "mini"
@@ -188,7 +196,7 @@
                 <el-switch
                 on-value="1"
                 off-value="0"
-                inactive-text="允许修改用户"
+                inactive-text="允许修改组员"
                 v-model="form.allow_upinfo"></el-switch>
                 <el-switch
                 on-value="1"
@@ -234,7 +242,7 @@
               style="width: 100%">
               <el-table-column
                 prop="alias"
-                label="用户名称"
+                label="组员名称"
                 width="120">
               </el-table-column>
               <el-table-column
@@ -273,13 +281,7 @@
           </el-dialog>
 
           <!--添加成员-->
-           <el-dialog title="添加群组成员" :visible.sync="outeraddVisible">
-              <el-dialog
-              width="30%"
-              title="内层 Dialog"
-              :visible.sync="inneraddVisible"
-              append-to-body>
-              </el-dialog>
+           <el-dialog width = "20%" title="添加群组成员" :visible.sync="outeraddVisible">
               <el-container>
                 <el-main width = "200">
                   <el-form ref="addform" :model="addform" label-width="80px">
@@ -289,15 +291,34 @@
                       <el-form-item label="联系电话">
                         <el-input v-model="addform.mobile"></el-input>
                       </el-form-item>
-                      <el-form-item>
-                        <el-button type="primary" icon="el-icon-tickets" @click="inneraddVisible = false">电话通讯录</el-button>
-                      </el-form-item>
                     </el-form>
                 </el-main>
               </el-container>
             <div slot="footer" class="dialog-footer">
               <el-button @click="outeraddVisible = false">取 消</el-button>
               <el-button type="primary" @click="saveBtnGoup()">确定</el-button>
+            </div>
+          </el-dialog> 
+
+          <!--同步通讯录添加成员-->
+          <el-dialog width = "20%" title="同步电话通讯录添加群组成员":visible.sync="outeraddPhoneVisible">
+              <el-container>
+                <el-main>
+                  <span>组员信息：</span>
+                  <el-cascader
+                    @change="getUserInfo"
+                    placeholder="请输入组员名或者手机号"
+                    :options="options"
+                    filterable
+                    width="400px"
+                    v-model="selectValue" 
+                  ></el-cascader>
+                  
+                </el-main>
+              </el-container>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="outeraddPhoneVisible = false">取 消</el-button>
+              <el-button type="primary" @click="saveBtnGoupbyPhoneList()">确定</el-button>
             </div>
           </el-dialog> 
 
@@ -329,11 +350,14 @@ import axios from 'axios'
     },
     data() {
       return {
+        //级联选择框内容
+        options:[],
+        selectValue:[],
         //选择服务器标题
         buttonText: '',
-        //关闭添加用户的按钮
+        //关闭添加组员的按钮
         outeraddVisible: false,
-        inneraddVisible: false,
+        outeraddPhoneVisible: false,
         //添加组员输入的姓名和号码
         addform: {
           name: '',
@@ -395,7 +419,43 @@ import axios from 'axios'
       }
     },
     methods:{
-        //日期控制 用户选择时间超过当前系统时间 默认系统时间
+      //直接添加组员
+      openaddMeber() {
+        this.addform.name = ''
+        this.addform.mobile = ''
+        this.outeraddVisible = true
+      },
+      //打开通讯录
+      openSelectPhoneList() {
+        this.selectValue= []
+        this.outeraddPhoneVisible = true
+      },
+      //获取选择的电话通讯录信息
+      getUserInfo: function() {
+        this.addform.name = ''
+        this.addform.mobile = ''
+        var arr = this.selectValue
+        for (var i=0;i<arr.length;i++){
+            
+            if(i===0){
+              this.addform.name =arr[i].replace(" ","")
+            }
+            if(i===1) {
+              console.log(arr[i])
+              this.addform.mobile = arr[i]
+            }
+        }
+      },
+      //加载级联
+      loadPhoneList: function() {
+        axios({
+            method: 'post',
+            url:'/org/findPhoneList',
+          }).then((res)=> {
+              this.options = res.data.data
+          })
+        },
+        //日期控制 组员选择时间超过当前系统时间 默认系统时间
         DateControl(){
           if(this.form.expire_time!=''){
             const ex = this.form.expire_time*1000
@@ -413,26 +473,159 @@ import axios from 'axios'
             }
           }
         },
+        //通讯通信息同步
+        saveBtnGoupbyPhoneList() {
+          const userInfo = this.selectValue
+          if(userInfo!=''&&userInfo!=null){
+            this.addUserInfo(this.addform.name,this.addform.mobile,"")
+          } else {
+            this.$message({
+              message: '请选择通讯录组员信息',
+              type: 'error'
+            })
+          }
+
+        },
         //保存组员的信息
         saveBtnGoup() {
-          const checkParm = {
-            mobile: this.addform.mobile
+           if(this.addform.name!=''&&this.addform.name!=null&&this.addform.mobile!=''&&this.addform.mobile!=null){
+            this.addUserInfo(this.addform.name,this.addform.mobile,"outeraddVisible")
+          } else {
+            this.$message({
+              message: '手机号和组员名不能为空！',
+              type: 'error'
+            })
           }
-           //先判断该用户是否已经是群组成员
+        },
+        addUserInfo: function(name,mobile,dialogparameter){
+          const checkParm = {
+            mobile: mobile
+          }
+           //先判断该组员是否已经是群组成员
             checkGroupMember(checkParm).then(response => {
             if (response.code === 0) {
                 const param = {
-                  name: this.addform.name,
-                  mobile: this.addform.mobile
+                  name: name,
+                  mobile: mobile
                 }
                 saveGroupMember(param).then(response => {
+                  console.log("response%o",response)
                   if (response.code === 0) {
-                    this.$message({
-                      message: '添加群组成员成功！',
-                      type: 'success'
-                    })
-                    this.outeraddVisible = false
+                    if(dialogparameter==='outeraddVisible') {
+                        this.$confirm('添加群组成员成功！是否保存该组员信息到电话通讯录?', '温馨提醒', {
+                          confirmButtonText: '保存',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        }).then(() => {
+                          this.$confirm('该组员信息已经保存到电话通讯录！是否为该组员注册ONENET账号?', '温馨提醒', {
+                            confirmButtonText: '注册',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                          }).then(() => {
+                            const registeparams = {
+                              mobile: this.addform.mobile,
+                              password: this.addform.mobile,
+                              nickname:  this.addform.name,
+                            }
+                            axios({
+                              method: 'post',
+                              url:'/rdp/tel_book_register',
+                              data:registeparams
+                            }).then((res)=> {
+                                if(res.data.result.data !=null){
+                                  if(res.data.result.data.already === 1) {
+                                    this.$message({
+                                      type: 'success',
+                                      message: '这个号码已经是ONENET账号!'
+                                    })
+                                  }else{
+                                    this.$message({
+                                      type: 'success',
+                                      message: '成功注册ONENET账号!'
+                                    })
+                                  }  
+                                }
+                            })
+                            this.outeraddVisible = false
+                          }).catch(() => {
+                            this.outeraddVisible = false
+                          })
+                        }).catch(() => {
+                          this.$confirm('是否为该组员注册ONENET账号?', '温馨提醒', {
+                            confirmButtonText: '注册',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                          }).then(() => {
+                            const registeparams = {
+                              mobile: this.addform.mobile,
+                              password: this.addform.mobile,
+                              nickname:  this.addform.name,
+                            }
+                            axios({
+                              method: 'post',
+                              url:'/rdp/tel_book_register',
+                              data:registeparams
+                            }).then((res)=> {
+                                if(res.data.result.data !=null){
+                                  if(res.data.result.data.already === 1) {
+                                    this.$message({
+                                      type: 'success',
+                                      message: '这个号码已经是ONENET账号!'
+                                    })
+                                  }else{
+                                    this.$message({
+                                      type: 'success',
+                                      message: '成功注册ONENET账号!'
+                                    })
+                                  }  
+                                }
+                            })
+                            this.outeraddVisible = false
+                          }).catch(() => {
+                            this.outeraddVisible = false
+                          })
+                        })
+                    } else {
+                       this.$confirm('添加群组成员成功！是否为该组员注册ONENET账号?', '温馨提醒', {
+                          confirmButtonText: '注册',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        }).then(() => {
+                          const registeparams = {
+                              mobile: this.addform.mobile,
+                              password: this.addform.mobile,
+                              nickname:  this.addform.name,
+                            }
+                            axios({
+                              method: 'post',
+                              url:'/rdp/tel_book_register',
+                              data:registeparams
+                            }).then((res)=> {
+                                if(res.data.result.data !=null){
+                                  if(res.data.result.data.already === 1) {
+                                    this.$message({
+                                      type: 'success',
+                                      message: '这个号码已经是ONENET账号!'
+                                    })
+                                  }else{
+                                    this.$message({
+                                      type: 'success',
+                                      message: '成功注册ONENET账号!'
+                                    })
+                                  }  
+                                }
+                            })
+                          this.outeraddPhoneVisible = false
+                        }).catch(() => {
+                          this. this.outeraddVisible  = false
+                        })
+                    }
                     this.loadData(this.criteria, this.currentPage, this.pagesize)
+                  } else{
+                    this.$message({
+                      message: response.msg,
+                      type: 'error'
+                    })
                   }
                 })
               }
@@ -457,7 +650,7 @@ import axios from 'axios'
           }).then((res)=> {
             if(res.data.code === 0){
               this.$message({
-                message: '成功移除对改用户分配的服务器！',
+                message: '成功移除对改组员分配的服务器！',
                 type: 'success'
               })
               this.searcheServerDialog = false
@@ -528,7 +721,7 @@ import axios from 'axios'
                     }).then((res)=> {
                       if(res.data.result.data !=null){
                         if(res.data.result.data.already === 1) {
-                           this.$confirm('该用户已经注册！是否需要给相应的用户发送短信通知下载aardp', '温馨提醒', {
+                           this.$confirm('该组员已经注册！是否需要给相应的组员发送短信通知下载aardp', '温馨提醒', {
                             confirmButtonText: '发送',
                             cancelButtonText: '不发送',
                             type: 'warning'
@@ -538,7 +731,7 @@ import axios from 'axios'
                             this.outerVisibles = false  
                           });
                         } else {
-                            this.$confirm('该用户注册成功！是否需要给相应的用户发送短信通知下载aardp', '温馨提醒', {
+                            this.$confirm('该组员注册成功！是否需要给相应的组员发送短信通知下载aardp', '温馨提醒', {
                             confirmButtonText: '发送',
                             cancelButtonText: '不发送',
                             type: 'warning'
@@ -553,14 +746,14 @@ import axios from 'axios'
                         }
                       } else{
                          this.$message({
-                          message: '注册失败！！',
+                          message: '取消！！',
                           type: 'error'
                         })
                       }
                     })
                   }).catch(() => {
                     this.$message({
-                      message: '取消注册',
+                      message: '取消！',
                       type: 'error'
                     })
                     this.outerVisibles = false         
@@ -589,7 +782,7 @@ import axios from 'axios'
       search: function(){
           this.loadData(this.criteria, this.currentPage, this.pagesize);
       },
-      //查询给指定用户分配的主机
+      //查询给指定组员分配的主机
       loadAssignData: function(mebile){
         const token = this.$store.state.user.token
         const params = {
@@ -613,7 +806,7 @@ import axios from 'axios'
             }
           })
       },
-      //查询用户的数据
+      //查询组员的数据
       loadData: function(criteria, pageNum, pageSize){                    
          axios({
             url: '/org/selectViewGroupList',
@@ -661,7 +854,7 @@ import axios from 'axios'
         } else {
           this.form.datetime = d
         }
-        //选择服务器的时候先将服务器用户的列表清空 和 选项
+        //选择服务器的时候先将服务器组员的列表清空 和 选项
         this.form.username = ''
         this.usernames = []
         for (var index in arr) {
@@ -676,31 +869,46 @@ import axios from 'axios'
       },
       //查询购买的服务器
       siginServer(index,row){
-        this.visible = true
-        this.ips_visible = false
-        this.sid_visible = false
-        this.usernames = []
-        this.hostList = []
-        this.form.sid = ''
-        this.buttonText = '选择服务器'
-        this.form.alias = row.name
-        this.form.mobile = row.mebile
-        const token = this.$store.state.user.token
-        const params = {
-          token: token,
-          app_name: 'aanets',
-          is_only_sid: 1
+
+        const registeparams = {
+          mobile: row.mebile,
+          password: row.mebile,
+          nickname:  row.name
         }
-        
         axios({
           method: 'post',
-          url:'/rdp/server',
-          data:params
-        }).then((res)=>{
-          this.hostData = res.data.result
+          url:'/rdp/tel_book_register',
+          data:registeparams
+        }).then((res)=> {
+            if(res.data.result.data !=null){
+              console.log("%o",res.data)
+                //分配服务器内容
+                this.visible = true
+                this.ips_visible = false
+                this.sid_visible = false
+                this.usernames = []
+                this.hostList = []
+                this.form.sid = ''
+                this.buttonText = '选择服务器'
+                this.form.alias = row.name
+                this.form.mobile = row.mebile
+                const token = this.$store.state.user.token
+                const params = {
+                  token: token,
+                  app_name: 'aanets',
+                  is_only_sid: 1
+                }
+                
+                axios({
+                  method: 'post',
+                  url:'/rdp/server',
+                  data:params
+                }).then((res)=>{
+                  this.hostData = res.data.result
+                })
+                this.outerVisibles = true
+            }
         })
-        this.outerVisibles = true
-
       },
       //移除群组成员
       deleteServer(index,row){
@@ -761,6 +969,8 @@ import axios from 'axios'
       this.handleLoginGroup()
     },
     mounted: function (){
+        //级联信息加载
+        this.loadPhoneList()
         this.buttonText = this.form.ips !=''?'重选':'选择服务器'
         axios({
           url: '/org/selectViewGroupList',

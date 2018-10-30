@@ -31,11 +31,6 @@
                 icon="el-icon-success"
                 type="success"
                 @click="verify(scope.$index, scope.row)">通过</el-button>
-              <el-button
-                size="mini"
-                icon="el-icon-error"
-                type="danger"
-                @click="remove(scope.$index, scope.row)">拒绝</el-button>
             </template>
           </el-table-column>
       </el-table>
@@ -70,9 +65,7 @@ import axios from 'axios'
       }
     },
     methods:{
-      remove(index,row) {
-        this.$alert("拒绝加群")
-      },
+      
       verify(index,row) {
         const param = {groupMemberId: row.groupMemberId}
         verifyGroupMember(param).then(response => {

@@ -119,12 +119,31 @@ export const asyncRouterMap = [
       }
     }]
   },
-
+  {
+    path: '/selectVue',
+    component: Layout,
+    meta: {
+      roles: ['groupLeader'],
+      title: 'MemberReview',
+      icon: 'example'
+    },
+    children: [
+      {
+      path: 'list',
+      component: () => import('@/views/group/select'),
+      name: '级联测选择测试',
+      meta: {
+        title: '级联测选择测试',
+        icon: 'list'
+      }
+    }]
+  },
+//页面测试使用
   {
     path: '/assignMemberList',
     component: Layout,
     meta: {
-      roles: ['groupLeader'],
+      roles: ['groupLeader','groupMember'],
       title: 'assignMemberList',
       icon: 'example'
     },
