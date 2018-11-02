@@ -23,10 +23,24 @@ const user = {
     loginGroup: false,
     logoutGroup: false,
     //登录人身份
-    loginRole: ''
+    loginRole: '',
+    //添加通讯录秘钥
+    secret: '',
+    //手机号
+    username: '',
+    orgName: ''
   },
 
   mutations: {
+    SET_ORGNAME: (state, orgName) => {
+      state.orgName = orgName
+    },
+    SET_USERNAME: (state, username) => {
+      state.username = username
+    },
+    SET_SECRET: (state, secret) => {
+      state.secret = secret
+    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
@@ -51,7 +65,6 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
-
     TOGGLE_LOGIN_COM: (state, isLoginCom) => {
       state.loginCom = !state.loginCom
     },
@@ -120,6 +133,7 @@ const user = {
            // console.log(" 登录信息 ---》》%o", data)
             // 若已登录公司，则使用公司身份，否则使用游客身份
             // 分配登录公司信息
+            //orgName: "TEst01"
             if (data.role !== 'visitor') {
               if(data.role ==='admin') {
                 commit('SET_LOGINROLE', "公司创建人")
@@ -133,6 +147,9 @@ const user = {
                 commit('SET_LOGINROLE', "公司创建人")
               }
               commit('SET_NAME', data.name)
+              commit('SET_ORGNAME', data.orgName)
+              commit('SET_USERNAME', data.username)
+              commit('SET_SECRET', data.secret)
               commit('SET_ORG_ID', data.orgId)
               commit('SET_ORG_NAME', data.orgName)
               commit('SET_TOKEN', data.token)
@@ -141,9 +158,12 @@ const user = {
               commit('SET_ROLES', [data.role])
             // 分配登录信息
           } else {
+              console.log(data.username)
               commit('SET_LOGINROLE', "游客")
               commit('SET_ROLES', [data.role])
               commit('SET_NAME', data.name)
+              commit('SET_USERNAME', data.username)
+              commit('SET_SECRET', data.secret)
               commit('SET_AVATAR', data.avatar)
             }
             // 返回角色信息

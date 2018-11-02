@@ -31,6 +31,15 @@ export function verifyGroupMember (query) {
 
   })
 }
+//不通过审核
+export function verifyGroupMember2 (query) {
+  return request({
+    url: '/org/verifyGroupMember2/',
+    method: 'post',
+    params: query
+
+  })
+}
 //移除群组成员
 export function deleteGroupMember (query) {
   return request({
@@ -60,6 +69,14 @@ export function removeGroup (query) {
 export function saveGroupMember (query) {
   return request({
     url: '/org/addGroupMember',
+    method: 'post',
+    params: query
+  })
+}
+//添加电话通讯录
+export function addPhoneList (query) {
+  return request({
+    url: '/org/addPhoneList',
     method: 'post',
     params: query
   })

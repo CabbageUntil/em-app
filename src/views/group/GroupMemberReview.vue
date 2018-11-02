@@ -31,6 +31,11 @@
                 icon="el-icon-success"
                 type="success"
                 @click="verify(scope.$index, scope.row)">通过</el-button>
+              <el-button
+                size="mini"
+                icon="el-icon-success"
+                type="danger"
+                @click="verify2(scope.$index, scope.row)">不通过</el-button>
             </template>
           </el-table-column>
       </el-table>
@@ -51,7 +56,7 @@
 <script>
 import Vue from 'vue'
 import moment from 'moment'
-import {verifyGroupMember } from '@/api/group'
+import {verifyGroupMember2, verifyGroupMember, deleteGroupMember } from '@/api/group'
 import axios from 'axios'
   export default {
     data() {
@@ -65,7 +70,6 @@ import axios from 'axios'
       }
     },
     methods:{
-      
       verify(index,row) {
         const param = {groupMemberId: row.groupMemberId}
         verifyGroupMember(param).then(response => {
@@ -80,6 +84,22 @@ import axios from 'axios'
           }
         }).catch(error => {
           this.$message.error('审核失败'+ ': ' + error)
+        })
+      },
+      verify2(index,row) {
+        const param = {groupMemberId: row.groupMemberId}
+        deleteGroupMember(param).then(response => {
+          if (response.code === 0) {
+            this.$message({
+              message: '成功移除申请！',
+              type: 'success'
+            })
+            this.loadNotViewMember()
+          } else {
+            this.$message.error('移除申请失败！')
+          }
+        }).catch(error => {
+          this.$message.error('移除申请'+ ': ' + error)
         })
       },
       dateFormat(row, column, cellValue, index){
@@ -130,6 +150,7 @@ import axios from 'axios'
             if(Array.isArray(res.data.data.data)&&res.data.data.data.length === 0) {
               this.visibleLoad = false
               this.visible  = true
+              this.tableData = res.data.data.data
             } else {
               this.visible = true
               this.visibleLoad = false

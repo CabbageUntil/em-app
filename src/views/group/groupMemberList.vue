@@ -21,14 +21,7 @@
             v-show="showBtn()"
             type="primary"
             icon="el-icon-circle-plus-outline"
-            @click="openaddMeber">直接添加成员</el-button>
-          </el-col>
-          <el-col :span="3">
-            <el-button
-            v-show="showBtn()"
-            type="warning"
-            icon="el-icon-tickets"
-            @click="openSelectPhoneList">同步电话通讯录添加成员</el-button>
+            @click="openaddMeber">添加成员</el-button>
           </el-col>
           <el-col :span="4" :offset="8">
           <el-button
@@ -284,14 +277,38 @@
            <el-dialog width = "20%" title="添加群组成员" :visible.sync="outeraddVisible">
               <el-container>
                 <el-main width = "200">
-                  <el-form ref="addform" :model="addform" label-width="80px">
-                      <el-form-item label="姓名">
-                        <el-input v-model="addform.name"></el-input>
-                      </el-form-item>
-                      <el-form-item label="联系电话">
-                        <el-input v-model="addform.mobile"></el-input>
-                      </el-form-item>
-                    </el-form>
+                    <table>
+                        <tr>
+                          <td style="text-align:right;">
+                            姓名:
+                          </td>
+                          <td>
+                            <el-autocomplete
+                              style="padding:5px;width:200px;"
+                              v-model="addform.name"
+                              :fetch-suggestions="querySearchAsync"
+                              placeholder="请输入姓名"
+                              @select="handleSelectName"
+                              @focus="focusPoint4"
+                            ></el-autocomplete>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:right;">
+                            联系电话:
+                          </td>
+                          <td>
+                            <el-autocomplete
+                              v-model="addform.mobile"
+                              style="width:200px;"
+                              :fetch-suggestions="querySearchAsync3"
+                              placeholder="请输入手机号码"
+                              @select="handleSelectPhone"
+                              @focus="focusPoint"
+                            ></el-autocomplete>
+                          </td>
+                        </tr>
+                    </table>
                 </el-main>
               </el-container>
             <div slot="footer" class="dialog-footer">
@@ -342,7 +359,7 @@
 import Vue from 'vue'
 import Qs from 'qs'
 import childtable  from './childtable'
-import {deleteGroupMember, saveGroupMember, checkGroupMember } from '@/api/group'
+import {deleteGroupMember, saveGroupMember, checkGroupMember, addPhoneList } from '@/api/group'
 import axios from 'axios'
   export default {
     components: {
@@ -350,6 +367,9 @@ import axios from 'axios'
     },
     data() {
       return {
+        data4: [],
+        data3: [],
+        timeout:  null,
         //级联选择框内容
         options:[],
         selectValue:[],
@@ -441,14 +461,13 @@ import axios from 'axios'
               this.addform.name =arr[i].replace(" ","")
             }
             if(i===1) {
-              console.log(arr[i])
               this.addform.mobile = arr[i]
             }
         }
       },
       //加载级联
       loadPhoneList: function() {
-        axios({
+          axios({
             method: 'post',
             url:'/org/findPhoneList',
           }).then((res)=> {
@@ -498,9 +517,9 @@ import axios from 'axios'
           }
         },
         addUserInfo: function(name,mobile,dialogparameter){
-          const checkParm = {
-            mobile: mobile
-          }
+            const checkParm = {
+              mobile: mobile
+            }
            //先判断该组员是否已经是群组成员
             checkGroupMember(checkParm).then(response => {
             if (response.code === 0) {
@@ -509,7 +528,6 @@ import axios from 'axios'
                   mobile: mobile
                 }
                 saveGroupMember(param).then(response => {
-                  console.log("response%o",response)
                   if (response.code === 0) {
                     if(dialogparameter==='outeraddVisible') {
                         this.$confirm('添加群组成员成功！是否保存该组员信息到电话通讯录?', '温馨提醒', {
@@ -517,38 +535,56 @@ import axios from 'axios'
                           cancelButtonText: '取消',
                           type: 'warning'
                         }).then(() => {
-                          this.$confirm('该组员信息已经保存到电话通讯录！是否为该组员注册ONENET账号?', '温馨提醒', {
-                            confirmButtonText: '注册',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                          }).then(() => {
-                            const registeparams = {
-                              mobile: this.addform.mobile,
-                              password: this.addform.mobile,
-                              nickname:  this.addform.name,
-                            }
-                            axios({
-                              method: 'post',
-                              url:'/rdp/tel_book_register',
-                              data:registeparams
-                            }).then((res)=> {
-                                if(res.data.result.data !=null){
-                                  if(res.data.result.data.already === 1) {
-                                    this.$message({
-                                      type: 'success',
-                                      message: '这个号码已经是ONENET账号!'
-                                    })
-                                  }else{
-                                    this.$message({
-                                      type: 'success',
-                                      message: '成功注册ONENET账号!'
-                                    })
-                                  }  
-                                }
-                            })
-                            this.outeraddVisible = false
-                          }).catch(() => {
-                            this.outeraddVisible = false
+                          const telparams = {
+                            name: name,
+                            mobile: mobile
+                          }
+                          addPhoneList(telparams).then(response => {
+                              if(response.data.code === 0){
+                              //刷新远程连接通讯录号码或者姓名
+                              this.loadTelList() 
+                              this.loadNameList()
+                               this.$confirm('该组员信息已经保存到电话通讯录！是否为该组员注册ONENET账号?', '温馨提醒', {
+                                  confirmButtonText: '注册',
+                                  cancelButtonText: '取消',
+                                  type: 'warning'
+                                }).then(() => {
+                                  const registeparams = {
+                                    mobile: this.addform.mobile,
+                                    password: this.addform.mobile,
+                                    nickname:  this.addform.name,
+                                  }
+                                  axios({
+                                    method: 'post',
+                                    url:'/rdp/tel_book_register',
+                                    data:registeparams
+                                  }).then((res)=> {
+                                      if(res.data.result.data !=null){
+                                        if(res.data.result.data.already === 1) {
+                                          this.$message({
+                                            type: 'success',
+                                            message: '这个号码已经是ONENET账号!'
+                                          })
+                                          this.outeraddVisible = false
+                                        }else{
+                                          this.$message({
+                                            type: 'success',
+                                            message: '成功注册ONENET账号!'
+                                          })
+                                          this.outeraddVisible = false
+                                        }  
+                                      } else {
+                                          this.$message({
+                                            type: 'error',
+                                            message: '注册ONENET账号失败!'
+                                          })
+                                          this.outeraddVisible = false
+                                      }
+                                  })
+                                }).catch(() => {
+                                  this.outeraddVisible = false
+                                })
+                              }
                           })
                         }).catch(() => {
                           this.$confirm('是否为该组员注册ONENET账号?', '温馨提醒', {
@@ -881,7 +917,6 @@ import axios from 'axios'
           data:registeparams
         }).then((res)=> {
             if(res.data.result.data !=null){
-              console.log("%o",res.data)
                 //分配服务器内容
                 this.visible = true
                 this.ips_visible = false
@@ -963,12 +998,86 @@ import axios from 'axios'
         } else {
           this.$store.dispatch('delVisitedViews', { path: '/dashboard' })
         }
-      }
+      },
+      //电话通讯录 loadTelList loadNameList
+      loadTelList: function() {
+            axios({
+              method: 'post',
+              url:'/org/getTelList',
+            }).then((res)=> {
+                if(res.data!=null){
+                  this.data3 = res.data.data
+                } else{
+                  this.data3 = []
+                }
+            })
+        },
+        loadNameList: function() {
+            axios({
+              method: 'post',
+              url:'/org/getNameList',
+            }).then((res)=> {
+                if(res.data!=null){
+                  this.data4 = res.data.data
+                } else {
+                  this.data4 = []
+                }
+            })
+        },
+        querySearchAsync(queryString, cb) {
+          var data4 = this.data4
+          var results = queryString ? data4.filter(this.createStateFilter(queryString)) : data4
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            cb(results);
+          }, 1000 * Math.random())
+        },
+        querySearchAsync3(queryString, cb) {
+          var data3 = this.data3
+          var results = queryString ? data3.filter(this.createStateFilter(queryString)) : data3
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            cb(results);
+          }, 1000 * Math.random())
+        },
+        createStateFilter(queryString) {
+          return (state) => {
+            return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          }
+        },
+        handleSelectName(item) {
+          this.data3 = []
+          var child = []
+          var s = item.value
+          var ss = item.phone
+          for (var i=0;i<ss.length;i++){
+              child.push({"value":ss[i],"name":s})
+          }
+          this.data3 = child
+        },
+        handleSelectPhone(item) {
+          this.addform.name = item.name
+        },
+        focusPoint(item) {
+          const d4 = this.addform.name
+          if(d4==''||4==null){
+            this.loadTelList()
+          } else {
+            console.log()
+          }
+        },
+        focusPoint4(item) {
+          this.loadNameList()
+        }
     },      
     activated () {
       this.handleLoginGroup()
     },
     mounted: function (){
+         //加载密钥
+        //加载
+        this.loadNameList()
+        this.loadTelList()
         //级联信息加载
         this.loadPhoneList()
         this.buttonText = this.form.ips !=''?'重选':'选择服务器'

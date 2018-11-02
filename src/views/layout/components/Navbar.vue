@@ -10,6 +10,10 @@
     <breadcrumb class="breadcrumb-container"/>
     <div class="right-menu">
       <el-tag
+       v-show="showBtn()"
+       class="userName right-menu-item"
+       placement="bottom">公司(群组)名称：{{this.$store.state.user.orgName}}</el-tag>
+      <el-tag
        class="userName right-menu-item"
        placement="bottom">欢迎！{{$store.getters.name+','+this.$store.state.user.loginRole}}</el-tag>
       <el-tooltip
@@ -70,6 +74,14 @@ export default {
     ])
   },
   methods: {
+    showBtn(){
+        const name = this.$store.state.user.orgName
+        if(name != ''&&name!=null){
+          return true
+        } else {
+            return false
+        }
+    },
     toggleSideBar () {
       this.$store.dispatch('toggleSideBar')
     },

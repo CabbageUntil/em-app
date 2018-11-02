@@ -111,9 +111,14 @@ import axios from 'axios'
                   this.visibleLoad = false
                   this.visible = true
                   this.tableData = res.data.result
-                } else {
+                } else if(res.data.code ===30){
                   this.visibleLoad = false
                   this.visible = true
+                  this.tableData = []
+                } else{
+                  this.visibleLoad = false
+                  this.visible = true
+                  this.tableData = res.data.result
                 }
             })
          },

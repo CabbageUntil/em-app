@@ -246,7 +246,7 @@ export default {
       },
       //日期格式化
       dateFormat(row, column, cellValue, index){
-        var dateMat = new Date(cellValue*1000)
+        var dateMat = new Date(cellValue)
         const year = dateMat.getFullYear();
         const month = (dateMat.getMonth() + 1)< 10 ? '0' + (dateMat.getMonth() + 1):(dateMat.getMonth() + 1);
         const day = dateMat.getDate()< 10 ? '0' + dateMat.getDate():dateMat.getDate();

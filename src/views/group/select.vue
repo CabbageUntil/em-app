@@ -1,98 +1,115 @@
-<template>
-<div>
-    <el-select v-model="value"  filterable clearable  @change="selectGet" placeholder="请选择">
-        <el-option
-        v-for="item in options1"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-        </el-option>
-    </el-select>
-    <el-select v-model="value1" filterable clearable    placeholder="请选择">
-        <el-option
-        v-for="item in options2"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-        </el-option>
-    </el-select>
-   <div class="block">
-    <span class="demonstration">只可选择最后一级菜单的选项</span>
-    <el-cascader
-        @change="selectGet1"
-        placeholder="请输入关键字"
-        :options="options3"
-        filterable
-        v-model="selectValue" 
-    ></el-cascader>
+ <template>
+  <div style="margin-left:150px;">
+      <span>姓名: </span>
+      <el-autocomplete
+        style="padding:15px;"
+        v-model="addform.name"
+        :fetch-suggestions="querySearchAsync"
+        placeholder="请输入姓名"
+        @select="handleSelectName"
+        @focus="focusPoint4"
+      ></el-autocomplete><br>
+      <span>联系电话: </span>
+      <el-autocomplete
+        v-model="addform.mobile"
+        style="padding:10px;"
+        :fetch-suggestions="querySearchAsync3"
+        placeholder="请输入手机号码"
+        @select="handleSelectPhone"
+        @focus="focusPoint"
+      ></el-autocomplete></br>
+      <el-button type="primary" @click="getValue">提交</el-button>
   </div>
-</div>
-</template>
+ </template>
 <script>
 import Vue from 'vue'
-import moment from 'moment'
 import axios from 'axios'
-  export default {
-    data() {
-      return {
-        options1: [{
-          value: '18076230400,17687659082',
-          label: '张良'
-        },{
-          value: '13132988680,1769082',
-          label: 'minmin'
-        }],
-        selectValue: [],
-        options2: {},
-        value: '',
-        value1: '',
-        options3: []
+export default {
+  data() {
+    return {
+      addform: {
+        name: '',
+        mobile: ''
+      },
+      data4: [],
+      data3: [],
+      timeout:  null
+    };
+  },
+  methods: {
+    loadTelList: function() {
+        axios({
+          method: 'post',
+          url:'/org/getTelList',
+        }).then((res)=> {
+            this.data3 = res.data.data
+        })
+    },
+    loadNameList: function() {
+        axios({
+          method: 'post',
+          url:'/org/getNameList',
+        }).then((res)=> {
+            this.data4 = res.data.data
+        })
+    },
+    getValue() {
+       this.$message({
+          type: 'success',
+          message: "成功提交！姓名"+this.addform.name+"电话号码"+this.addform.mobile
+        });
+    },
+    querySearchAsync(queryString, cb) {
+      var data4 = this.data4
+      var results = queryString ? data4.filter(this.createStateFilter(queryString)) : data4
+
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000 * Math.random())
+    },
+    querySearchAsync3(queryString, cb) {
+      var data3 = this.data3
+      var results = queryString ? data3.filter(this.createStateFilter(queryString)) : data3
+
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000 * Math.random())
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       }
     },
-    methods: {
-      // loadDelete:function(id) 
-        loadPhoneList: function() {
-          axios({
-              method: 'post',
-              url:'/org/findPhoneList',
-            }).then((res)=> {
-                console.log("%o",res.data)
-                this.options3 = res.data.data
-                
-            })
-        },
-        selectGet(val){
-            this.value = ''
-            this.value1 = ''
-            console.log("第一个输入框的值"+val)
-            this.options2 = []
-            let obj = {};
-            obj = this.options1.find((item)=>{
-                return item.value === val;
-            });
-            this.value = obj.label
-            var nane = obj.label;
-            var child = []
-            var ss = val.split(",");
-            for (var i=0;i<ss.length;i++){
-                child.push({"value":obj.label,"label":ss[i]}); 
-            }
-            this.options2 = child
-       },
-        selectGet1(val){
-            this.$alert("选择的数值："+this.selectValue)
-        }
+    handleSelectName(item) {
+      this.data3 = []
+      var child = []
+      var s = item.value
+      var ss = item.phone
+      for (var i=0;i<ss.length;i++){
+          child.push({"value":ss[i],"name":s})
+      }
+      this.data3 = child
     },
-    mounted: function (){
-      this.loadPhoneList()
+    handleSelectPhone(item) {
+      this.addform.name = item.name
     },
+    focusPoint(item) {
+      const d4 = this.addform.name
+      if(d4==''||4==null){
+        this.loadTelList()
+      } else {
+        console.log()
+      }
+    },
+    focusPoint4(item) {
+      this.loadNameList()
+    }
+  },
+  mounted() {
+    this.loadNameList()
+    this.loadTelList()
   }
+}
 </script>
-
-<style scoped>
-  .container{
-    width:99.8%;
-    height:500px;
-    padding:10px
-  }
-</style>
